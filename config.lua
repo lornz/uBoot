@@ -1,0 +1,1 @@
+application = {      content  =      {           width = 480,           height = 800,           fps = 60,           scale = "letterbox",     }} 
