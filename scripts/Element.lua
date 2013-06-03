@@ -56,6 +56,7 @@ function displayImage(element)
 		button.x = imageBackground.x + 64
 		button.y = imageBackground.y + 64
 		button.state = 0
+		button.skinID = element.skinID
 		button.label = display.newText(element.skinID, 0, 0, native.systemFont, 25)
 		button.label:setReferencePoint(display.centerReferencePoint)
 		button.label.x = button.x
@@ -64,7 +65,7 @@ function displayImage(element)
 		function buttonTap(event)
 			local button = event.target
 			local state = event.target.state
-			print("state = " .. state)
+			local id = event.target.skinID
 			if(state == 0) then
 				button:prepare("button2")
 				button:play()
@@ -76,6 +77,7 @@ function displayImage(element)
 				button.state = 0
 				--TODO: hier Nachricht an Server absetzen über Statusänderung
 			end
+			print("button " .. id .. ": state = " .. state)
 		end
 		button:addEventListener("tap", buttonTap)
 	end
