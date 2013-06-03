@@ -1,6 +1,9 @@
 require("scripts.Client")
 require("scripts.Board")
 require("scripts.Element")
+require("scripts.connection")
+
+
 
 local function toggleButtonPressed(event) 
 	t = event.target
@@ -73,5 +76,8 @@ while(not(client1.board.elements[i] == nil)) do
 	displayImage(client1.board.elements[i])
 	i = i + 1
 end
+
+gameChannel = "test"
+subscribe(gameChannel)
 
 
