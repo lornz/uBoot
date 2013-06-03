@@ -56,6 +56,10 @@ function displayImage(element)
 		button.x = imageBackground.x + 64
 		button.y = imageBackground.y + 64
 		button.state = 0
+		button.label = display.newText(element.skinID, 0, 0, native.systemFont, 25)
+		button.label:setReferencePoint(display.centerReferencePoint)
+		button.label.x = button.x
+		button.label.y = button.y
 
 		function buttonTap(event)
 			local button = event.target
