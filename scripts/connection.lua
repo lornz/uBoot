@@ -9,15 +9,31 @@ multiplayer = pubnub.new({
 })
 
 
+
 local player = {}
-local partnerNumber = 1
+local playerNumber = 1
 local function addPlayer(partnerID)
 	if (player[partnerID] == nil) then
-		player[partnerID] = { partnerID = partnerID, partnerNumber = partnerNumber}
-		partnerNumber = partnerNumber + 1
-		print("partner added")
+		player[partnerID] = { partnerID = partnerID, playerNumber = playerNumber}
+		playerNumber = playerNumber + 1
+		print("player added")
 	else
-		print("partner already in list")
+		print("player already in list")
+	end
+end
+
+function chooseServer()
+	local temp = uuid
+	for key, value in pairs(player) do 
+		if (key < temp) then
+			temp = key
+		end
+	end
+	print("server uuid: "..temp)
+	if (temp == uuid) then
+		print("Hurra, ich bin der Server!")
+	else
+		print("Hurra, ich bin nur Client!")
 	end
 end
 
