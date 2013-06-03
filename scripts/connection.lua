@@ -1,5 +1,7 @@
 require ("pubnub")
 
+connectionMode = 0 -- 0: nicht verbunden, 1: Server, 2: Client
+
 multiplayer = pubnub.new({
     publish_key   = "pub-c-0a08fcd9-9f7f-4d08-8d4e-2268d802db02",
     subscribe_key = "sub-c-2ad01006-cc6b-11e2-ba80-02ee2ddab7fe",
@@ -30,10 +32,13 @@ function chooseServer()
 		end
 	end
 	print("server uuid: "..temp)
+    print("eigene uuid: "..uuid)
 	if (temp == uuid) then
 		print("Hurra, ich bin der Server!")
+        connectionMode = 1 --server
 	else
 		print("Hurra, ich bin nur Client!")
+        connectionMode = 2 --client
 	end
 end
 
