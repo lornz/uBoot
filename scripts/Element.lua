@@ -25,31 +25,6 @@ function Element:new(sizeX,position)
 	return element
 end
 
-local function toggleButtonPressed(event) 
-	t = event.target
-	if(event.phase == "ended") then
-		if(t.state == false) then
-			old = t
-			t = display.newImage( "media/gfx/11buttonGreen.png" )
-			t.x = old.x
-			t.y = old.y
-			old:removeSelf()
-			t.state = true
-			t:addEventListener("touch", toggleButtonPressed)
-			return true
-		else
-			old = t
-			t = display.newImage( "media/gfx/11buttonRed.png" )
-			t.x = old.x
-			t.y = old.y
-			old:removeSelf()
-			t.state = false
-			t:addEventListener("touch", toggleButtonPressed)
-			return false
-		end
-	end
-end
-
 
 function displayImage(element)
 	local s = element.sizeX
@@ -71,18 +46,33 @@ function displayImage(element)
 	imageBackground.y = 72 + (math.floor(element.position/5))*128
 
 	if(s == 1) then
-		local currentButton = display.newImage( "media/gfx/11buttonRed.png" )
-		currentButton.x = imageBackground.x + 64
-		currentButton.y = imageBackground.y + 64
-		currentButton.isVisible = true
-		currentButton.state = false
-		local buttonState = 0
-		print(buttonState)
-		buttonState = currentButton:addEventListener("touch", toggleButtonPressed) -- hier kommt irgendwie immer nil als return, TODO: herausfinden warum das so ist, eigentlich braucht man an dieser Stelle den neuen Status
-		print(buttonState)
-		textLabel = display.newText(element.skinID,0, 0, native.systemFont, 16)
-		textLabel:setReferencePoint(display.CenterReferencePoint)
-		textLabel.x = currentButton.x
-		textLabel.y = currentButton.y
+		local sheet1 = sprite.newSpriteSheet( "media/gfx/11buttonSprite.png", 96, 96 )
+		local spriteSet1 = sprite.newSpriteSet(sheet1, 1, 2)
+		sprite.add( spriteSet1, "button1", 1, 1, 1, 0 )
+		sprite.add( spriteSet1, "button2", 2, 1, 1, 0 )  
+		local button = sprite.newSprite( spriteSet1 )
+		button:prepare("button1")
+		button:play()       
+		button.x = imageBackground.x + 64
+		button.y = imageBackground.y + 64
+		button.state = 0
+
+		function buttonTap(event)
+			local button = event.target
+			local state = event.target.state
+			print("state = " .. state)
+			if(state == 0) then
+				button:prepare("button2")
+				button:play()
+				button.state = 1
+				--TODO: hier Nachricht an Server absetzen über Statusänderung
+			elseif(state == 1) then
+				button:prepare("button1")
+				button:play()
+				button.state = 0
+				--TODO: hier Nachricht an Server absetzen über Statusänderung
+			end
+		end
+		button:addEventListener("tap", buttonTap)
 	end
 end
