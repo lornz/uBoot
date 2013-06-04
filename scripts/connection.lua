@@ -12,11 +12,11 @@ multiplayer = pubnub.new({
 
 
 
-local player = {}
-local playerNumber = 1
-local function addPlayer(partnerID)
-	if (player[partnerID] == nil) then
-		player[partnerID] = { partnerID = partnerID, playerNumber = playerNumber}
+player = {} -- speicher alle anwesenden Spieler
+local playerNumber = 1 -- bisher ungenutzt
+local function addPlayer(playerUUID)
+	if (player[playerUUID] == nil) then
+		player[playerUUID] = { uuid = playerUUID, playerNumber = playerNumber, ready = false}
 		playerNumber = playerNumber + 1
 		print("player added")
 	else
@@ -24,8 +24,11 @@ local function addPlayer(partnerID)
 	end
 end
 
-function chooseServer()
+local function chooseServer()
+    -- ermittelt wer Server ist und wer Client ist
 	local temp = uuid
+
+    -- kleinste uuid in der Liste aller "player" finden
 	for key, value in pairs(player) do 
 		if (key < temp) then
 			temp = key
@@ -42,18 +45,70 @@ function chooseServer()
 	end
 end
 
-local function receiveMessage(content,mode,senderUUID)
-    	-- Eigene Nachrichten ignorieren
-    	print("message: "..content)
-    	--print("message mode: "..mode)
-    	if (mode == "connect") then
-    		if(content == "ping") then
-    			sendStuff("pong","connect",gameChannel)
-    			addPlayer(senderUUID)
-    		elseif(content == "pong") then
-    			addPlayer(senderUUID)
-    		end
-    	end
+local function connectMessage(content,senderUUID)
+    -- reagiert auf ping/pong Nachrichten
+    if(content == "ping") then
+            sendStuff("pong","connect",gameChannel)
+            addPlayer(senderUUID)
+    elseif(content == "pong") then
+            addPlayer(senderUUID)
+    end
+end
+
+local function initMessage(content,senderUUID)
+    -- reagiert auf initialisierungs Nachrichten (Board erstellen)
+    local i = 1
+    while(not(content.board.elements[i] == nil)) do 
+        print ("position = " .. content.board.elements[i].position .. " , size = " ..content.board.elements[i].sizeX .. " , skinID = " .. content.board.elements[i].skinID)
+        displayImage(content.board.elements[i])
+        i = i + 1
+    end
+end
+
+local function readyMessage(content,senderUUID)
+    -- reagiert auf "ready" Nachrichten
+    local function checkReadyStatus()
+        local startGame = true
+        -- prüft, ob alle Spieler (auch man selbst) "Ready" sind
+        for key, value in pairs(player) do 
+            --print(key)
+            --print (value.ready)
+            if (value.ready == false) then
+                startGame = false
+            end
+        end
+
+        if (startGame == true) then
+            chooseServer() -- bestimme wer Server ist
+            if (connectionMode == 1) then
+                -- Nur der Server prüft ob ALLE ready sind, und startet das Spiel dann
+                print("Spiel kann starten!!!")
+                initUBoot()
+            end
+        end
+
+    end
+
+    player[senderUUID].ready = content -- setze Spieler mit senderUUID auf ready/not-ready
+    checkReadyStatus()
+end
+
+local function receiveMessage(content,mode,senderUUID,destination)
+    -- Nachrichten je nach"mode" weitergeben
+    if (mode == "connect") then
+        connectMessage(content,senderUUID)
+    end
+
+    if (mode == "init") then
+        if (destination == uuid) then
+            -- ist die Nachricht für mich?
+            initMessage(content,senderUUID)
+        end
+    end
+
+    if (mode == "ready") then
+        readyMessage(content,senderUUID)
+    end
 end
 
 function subscribe(channel)
@@ -67,10 +122,8 @@ function subscribe(channel)
         end,
         callback = function(message)
         	-- message received -> do something
-        	if not (message.uuid == uuid) then
-        		-- eigene Nachrichten ignorieren
-        		receiveMessage(message.content,message.mode,message.uuid)
-        	end
+            print(message.mode.." Nachricht empfangen")
+        	receiveMessage(message.content,message.mode,message.uuid,message.destination)
         end,
         errorback = function()
             print("Network Connection Lost")
@@ -78,10 +131,10 @@ function subscribe(channel)
     })
 end
 
-function sendStuff(content,mode,channel)
+function sendStuff(content,mode,channel,destination)
 	multiplayer:publish({
 	    channel  = channel,
-	    message  = { content = content, mode = mode, uuid = uuid,},
+	    message  = { content = content, mode = mode, uuid = uuid, destination = destination},
 	    callback = function(info)
 	        -- WAS MESSAGE DELIVERED?
 	        if info[1] then
