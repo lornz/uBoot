@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 local testBoard = { elements = { 	sizeX = 20,	
 									position = 2,
 									state = true,
@@ -21,9 +20,7 @@ local function sendReady()
 		sendStuff(true,"ready",gameChannel)
 	--end
 end
-timer.performWithDelay( 10000, sendReady, 1)
-=======
-gameChannel = "test"
-subscribe(gameChannel)
-timer.performWithDelay( 5000, chooseServer, 0)
->>>>>>> master
+--timer.performWithDelay( 10000, sendReady, 1)
+
+lobbyChannel = "lobby"
+

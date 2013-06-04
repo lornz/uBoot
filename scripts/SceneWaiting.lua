@@ -27,9 +27,18 @@ function scene:createScene( event )
         --      Example use-case: Restore 'group' from previously saved state.
 
         -----------------------------------------------------------------------------
-        
 
-        --subscribe(gameChannel)
+        --Provisorium!!!
+        local textStart = display.newText("Ready?", 0, 0, native.systemFont, 72)
+        textStart:setReferencePoint(display.centerReferencePoint)
+        textStart.x =  display.viewableContentWidth/2
+        textStart.y =  display.viewableContentHeight/2
+        group:insert(textStart)
+        local function textStartTap(event)
+                textStart.text = "I'm ready"
+                sendStuff(true,"ready",gameChannel)
+        end
+        textStart:addEventListener("tap", textStartTap)
 end
 
 
@@ -68,6 +77,7 @@ function scene:exitScene( event )
         --      INSERT code here (e.g. stop timers, remove listeners, unload sounds, etc.)
 
         -----------------------------------------------------------------------------
+
 end
 
 

@@ -2,15 +2,10 @@ require("scripts.Client")
 require("scripts.Board")
 require("scripts.Element")
 require("scripts.connection")
-
-<<<<<<< HEAD
 require("scripts.debugLorenz")
 
 storyboard = require( "storyboard" )
 
-=======
-storyboard = require( "storyboard" )
->>>>>>> master
 
 
 transitionOptions =
@@ -29,5 +24,6 @@ function initUBoot()
 		local newClient = Client:new()
 		sendStuff(newClient,"init",gameChannel,value.uuid) -- schickt "Board" an alle Spieler
     end
+    storyboard.gotoScene( "scripts.SceneGame", transitionOptions )
 	
 end
