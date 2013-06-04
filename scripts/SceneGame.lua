@@ -36,8 +36,7 @@ function scene:createScene( event )
                 i = i + 1
         end
         
-        gameChannel = "test"
-        subscribe(gameChannel)
+        require("scripts.debugLorenz")
 end
 
 
