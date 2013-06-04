@@ -2,6 +2,7 @@ require("scripts.Client")
 require("scripts.Board")
 require("scripts.Element")
 require("scripts.connection")
+require("scripts.debugLorenz")
 
 
 
