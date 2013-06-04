@@ -2,19 +2,11 @@ require("scripts.Client")
 require("scripts.Board")
 require("scripts.Element")
 require("scripts.connection")
-
-<<<<<<< HEAD
-storyboard = require( "storyboard" )
-=======
-<<<<<<< HEAD
 require("scripts.debugLorenz")
 
 storyboard = require( "storyboard" )
 
-=======
-storyboard = require( "storyboard" )
->>>>>>> master
->>>>>>> origin/connection
+
 
 
 transitionOptions =
