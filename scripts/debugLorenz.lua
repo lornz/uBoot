@@ -25,11 +25,11 @@ local function sendReady()
 	--end
 end
 
-timer.performWithDelay( 10000, sendReady, 1)
+--timer.performWithDelay( 10000, sendReady, 1)
 
-gameChannel = "test"
-subscribe(gameChannel)
-timer.performWithDelay( 5000, chooseServer, 0)
+--gameChannel = "test"
+--subscribe(gameChannel)
+--timer.performWithDelay( 5000, chooseServer, 0)
 
 --timer.performWithDelay( 10000, sendReady, 1)
 
