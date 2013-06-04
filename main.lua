@@ -6,11 +6,6 @@ require("scripts.debugLorenz")
 
 storyboard = require( "storyboard" )
 
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/connection
-
 
 transitionOptions =
 {
