@@ -3,10 +3,14 @@ require("scripts.Board")
 require("scripts.Element")
 require("scripts.connection")
 
+<<<<<<< HEAD
 require("scripts.debugLorenz")
 
 storyboard = require( "storyboard" )
 
+=======
+storyboard = require( "storyboard" )
+>>>>>>> master
 
 
 transitionOptions =
