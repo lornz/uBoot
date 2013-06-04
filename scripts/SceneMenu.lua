@@ -19,7 +19,7 @@ local scene = storyboard.newScene()
 
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
-        local group = self.view
+        menuGroup = self.view
 
         -----------------------------------------------------------------------------
 
@@ -29,15 +29,15 @@ function scene:createScene( event )
         -----------------------------------------------------------------------------
 
         --Provisorium!!!
-        local textStart = display.newText("Start Game!", 0, 0, native.systemFont, 72)
+        local textStart = display.newText("Select Game!", 0, 0, native.systemFont, 72)
         textStart:setReferencePoint(display.centerReferencePoint)
         textStart.x =  display.viewableContentWidth/2
-        textStart.y =  display.viewableContentHeight/2
-        local function textStartTap(event)
-                storyboard.gotoScene( "scripts.SceneGame", transitionOptions )
-        end
-        textStart:addEventListener("tap", textStartTap)
+        textStart.y =  display.viewableContentHeight-100
+        menuGroup:insert(textStart)
 
+
+        subscribe(lobbyChannel)
+        sendStuff("hi","discover",lobbyChannel)
 end
 
 
@@ -76,7 +76,6 @@ function scene:exitScene( event )
         --      INSERT code here (e.g. stop timers, remove listeners, unload sounds, etc.)
 
         -----------------------------------------------------------------------------
-
 end
 
 

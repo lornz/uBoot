@@ -9,10 +9,10 @@ multiplayer = pubnub.new({
     ssl           = nil,
     origin        = "pubsub.pubnub.com"
 })
+uuid = multiplayer:UUID()
 
-
-
-player = {} -- speicher alle anwesenden Spieler
+games = {} -- speichert alle verfügbaren Spiele
+player = {} -- speichert alle anwesenden Spieler
 local playerNumber = 1 -- bisher ungenutzt
 local function addPlayer(playerUUID)
 	if (player[playerUUID] == nil) then
@@ -88,26 +88,63 @@ local function readyMessage(content,senderUUID)
         end
 
     end
-
     player[senderUUID].ready = content -- setze Spieler mit senderUUID auf ready/not-ready
     checkReadyStatus()
 end
 
-local function receiveMessage(content,mode,senderUUID,destination)
-    -- Nachrichten je nach"mode" weitergeben
-    if (mode == "connect") then
-        connectMessage(content,senderUUID)
+local function joinGame(event)
+    if (event.phase == "ended") then
+        gameChannel = event.target.text
+        subscribe(gameChannel)
+        sendStuff("ping","connect",gameChannel)
+        unsubscribe(lobbyChannel)
+        storyboard.gotoScene( "scripts.SceneWaiting", transitionOptions )
     end
+end
 
-    if (mode == "init") then
-        if (destination == uuid) then
-            -- ist die Nachricht für mich?
-            initMessage(content,senderUUID)
+local i = 1
+local function updateLobby()
+    -- zeigt alle verfügbaren Spiele in "games{}" an
+    for key, value in pairs(games) do 
+        print("Spiel "..i..": "..key)
+        if (value.show == true) then
+            local myText = display.newText( key, 50, i*50, nil, display.contentWidth/23 )
+            menuGroup:insert(myText)
+            myText:addEventListener("touch", joinGame)
+            i = i + 1
+        end
+        value.show = false
+    end
+    -- Erweiterung: Spiele die nicht mehr da sind löschen
+end
+local function receiveMessage(channel,content,mode,senderUUID,destination)
+    if (channel == gameChannel) then-- Nachrichten je nach"mode" weitergeben
+        if (mode == "connect") then
+            connectMessage(content,senderUUID)
+        end
+
+        if (mode == "init") then
+            if (destination == uuid) then
+                -- ist die Nachricht für mich?
+                initMessage(content,senderUUID)
+            end
+        end
+
+        if (mode == "ready") then
+            readyMessage(content,senderUUID)
         end
     end
-
-    if (mode == "ready") then
-        readyMessage(content,senderUUID)
+    if (channel == lobbyChannel) then
+        if (mode == "discover") then
+            sendStuff(uuid,"reply",lobbyChannel)
+            -- Erweiterung: Anzahl der Spieler im Raum zurück senden
+        end
+        if (mode == "reply") then
+            if (games[content] == nil) then
+                games[content] = {content = content, show = true}
+                updateLobby()
+            end
+        end
     end
 end
 
@@ -116,14 +153,11 @@ function subscribe(channel)
         channel = channel,
         connect = function()
             print("Connected to ".. channel)
-            uuid = multiplayer:UUID()
-
-            sendStuff("ping","connect",gameChannel)
         end,
         callback = function(message)
         	-- message received -> do something
-            print(message.mode.." Nachricht empfangen")
-        	receiveMessage(message.content,message.mode,message.uuid,message.destination)
+            print(message.mode.." Nachricht empfangen in: "..channel)
+        	receiveMessage(message.channel,message.content,message.mode,message.uuid,message.destination)
         end,
         errorback = function()
             print("Network Connection Lost")
@@ -131,10 +165,17 @@ function subscribe(channel)
     })
 end
 
+function unsubscribe(channel)
+    multiplayer:unsubscribe({
+        channel  = channel,
+    })
+    print("unsubscribed from: "..channel)
+end
+
 function sendStuff(content,mode,channel,destination)
 	multiplayer:publish({
 	    channel  = channel,
-	    message  = { content = content, mode = mode, uuid = uuid, destination = destination},
+	    message  = { channel = channel, content = content, mode = mode, uuid = uuid, destination = destination},
 	    callback = function(info)
 	        -- WAS MESSAGE DELIVERED?
 	        if info[1] then
