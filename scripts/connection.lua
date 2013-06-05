@@ -9,7 +9,10 @@ multiplayer = pubnub.new({
     ssl           = nil,
     origin        = "pubsub.pubnub.com"
 })
-uuid = multiplayer:UUID()
+
+function createUUID()
+    uuid = multiplayer:UUID()
+end
 
 games = {} -- speichert alle verfügbaren Spiele
 player = {} -- speichert alle anwesenden Spieler
@@ -57,6 +60,11 @@ end
 
 local function initMessage(content,senderUUID)
     -- reagiert auf initialisierungs Nachrichten (Board erstellen)
+    storyboard.gotoScene( "scripts.SceneGame", transitionOptions )
+    if (connectionMode == 1) then
+        unsubscribe(lobbyChannel)
+    end
+
     local i = 1
     while(not(content.board.elements[i] == nil)) do 
         print ("position = " .. content.board.elements[i].position .. " , size = " ..content.board.elements[i].sizeX .. " , skinID = " .. content.board.elements[i].skinID)
@@ -71,15 +79,13 @@ local function readyMessage(content,senderUUID)
         local startGame = true
         -- prüft, ob alle Spieler (auch man selbst) "Ready" sind
         for key, value in pairs(player) do 
-            --print(key)
-            --print (value.ready)
             if (value.ready == false) then
                 startGame = false
             end
         end
 
         if (startGame == true) then
-            chooseServer() -- bestimme wer Server ist
+            --chooseServer() -- bestimme wer Server ist
             if (connectionMode == 1) then
                 -- Nur der Server prüft ob ALLE ready sind, und startet das Spiel dann
                 print("Spiel kann starten!!!")
@@ -88,15 +94,27 @@ local function readyMessage(content,senderUUID)
         end
 
     end
-    player[senderUUID].ready = content -- setze Spieler mit senderUUID auf ready/not-ready
-    checkReadyStatus()
+    if (player[senderUUID].ready == false) then
+        player[senderUUID].ready = content -- setze Spieler mit senderUUID auf ready/not-ready
+        checkReadyStatus()
+    end
+end
+
+function createGame()
+    connectionMode = 1 -- Server
+    gameChannel = deviceID
+    subscribe(gameChannel)
+    --sendStuff("ping","connect",gameChannel)
+    storyboard.gotoScene( "scripts.SceneWaiting", transitionOptions )
 end
 
 local function joinGame(event)
     if (event.phase == "ended") then
-        gameChannel = event.target.text
+        connectionMode = 2 -- Client
+        gameChannel = event.target.text 
         subscribe(gameChannel)
         sendStuff("ping","connect",gameChannel)
+        sendStuff(gameChannel,"reply",lobbyChannel)
         unsubscribe(lobbyChannel)
         storyboard.gotoScene( "scripts.SceneWaiting", transitionOptions )
     end
@@ -136,10 +154,14 @@ local function receiveMessage(channel,content,mode,senderUUID,destination)
     end
     if (channel == lobbyChannel) then
         if (mode == "discover") then
-            sendStuff(uuid,"reply",lobbyChannel)
-            -- Erweiterung: Anzahl der Spieler im Raum zurück senden
+            if (connectionMode == 1) then
+                -- Antworte auf "discover" Nachrichten mit dem eigenen Spiel-Namen
+                sendStuff(gameChannel,"reply",lobbyChannel)
+                -- Erweiterung: Anzahl der Spieler im Raum zurück senden
+            end
         end
         if (mode == "reply") then
+            -- wenn eine Nachricht auf die "discover" Anfrage zurück kommt, wird der Raumname gespeichert und die Lobby aktualisiert
             if (games[content] == nil) then
                 games[content] = {content = content, show = true}
                 updateLobby()

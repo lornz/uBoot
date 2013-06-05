@@ -23,6 +23,4 @@ function initUBoot()
 		local newClient = Client:new()
 		sendStuff(newClient,"init",gameChannel,value.uuid) -- schickt "Board" an alle Spieler
     end
-    storyboard.gotoScene( "scripts.SceneGame", transitionOptions )
-	
 end

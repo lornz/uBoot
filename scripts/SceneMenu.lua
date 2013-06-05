@@ -29,15 +29,33 @@ function scene:createScene( event )
         -----------------------------------------------------------------------------
 
         --Provisorium!!!
-        local textStart = display.newText("Select Game!", 0, 0, native.systemFont, 72)
+        local textStart = display.newText("Create uBoot!", 0, 0, native.systemFont, 72)
         textStart:setReferencePoint(display.centerReferencePoint)
         textStart.x =  display.viewableContentWidth/2
         textStart.y =  display.viewableContentHeight-100
         menuGroup:insert(textStart)
+        local function textStartTap(event)
+                createGame()
+        end
+        textStart:addEventListener("tap", textStartTap)
 
+        local textStart2 = display.newText("or jump in another uBoot", 0, 0, native.systemFont, 30)
+        textStart2:setReferencePoint(display.centerReferencePoint)
+        textStart2.x =  display.viewableContentWidth/2
+        textStart2.y =  display.viewableContentHeight-40
+        menuGroup:insert(textStart2)
+        
+        local textStart3 = display.newText("Avaible uBoots:", 0, 0, native.systemFont, 30)
+        textStart3:setReferencePoint(display.centerReferencePoint)
+        textStart3.x =  150
+        textStart3.y =  30
+        menuGroup:insert(textStart3)
 
         subscribe(lobbyChannel)
-        sendStuff("hi","discover",lobbyChannel)
+        local function discover()
+                sendStuff("hi","discover",lobbyChannel)
+        end
+        discoverTimer = timer.performWithDelay( 2000, discover, 0)
 end
 
 
@@ -76,6 +94,7 @@ function scene:exitScene( event )
         --      INSERT code here (e.g. stop timers, remove listeners, unload sounds, etc.)
 
         -----------------------------------------------------------------------------
+        timer.cancel( discoverTimer ) 
 end
 
 

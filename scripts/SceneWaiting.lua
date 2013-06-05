@@ -35,10 +35,18 @@ function scene:createScene( event )
         textStart.y =  display.viewableContentHeight/2
         group:insert(textStart)
         local function textStartTap(event)
-                textStart.text = "I'm ready"
-                sendStuff(true,"ready",gameChannel)
+                if(event.phase == "ended") then
+                        textStart.text = "I'm ready"
+                        sendStuff(true,"ready",gameChannel)
+                end
         end
-        textStart:addEventListener("tap", textStartTap)
+        textStart:addEventListener("touch", textStartTap)
+
+        local roomName = display.newText("uBoot: "..gameChannel, 0, 0, native.systemFont, 30)
+        roomName:setReferencePoint(display.centerReferencePoint)
+        roomName.x =  display.viewableContentWidth/2
+        roomName.y =  50
+        group:insert(roomName)
 end
 
 
