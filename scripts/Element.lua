@@ -27,6 +27,7 @@ end
 
 
 function displayImage(element)
+	local id = element.skinID
 	local s = element.sizeX
 	print("s = " .. s)
 	local imageBackground = nil
@@ -45,7 +46,7 @@ function displayImage(element)
 	imageBackground.x = 144 + math.mod((element.position-1),4)*128
 	imageBackground.y = 72 + (math.floor(element.position/5))*128
 
-	if(s == 1) then
+	if(s == 1 and id < 150) then
 		local sheet1 = sprite.newSpriteSheet( "media/gfx/11buttonSprite.png", 96, 96 )
 		local spriteSet1 = sprite.newSpriteSet(sheet1, 1, 2)
 		sprite.add( spriteSet1, "button1", 1, 1, 1, 0 )
@@ -80,6 +81,39 @@ function displayImage(element)
 			print("button " .. id .. ": state = " .. state)
 		end
 		button:addEventListener("tap", buttonTap)
+	elseif(s == 1 and id >= 150) then
+		local steeringwheel = display.newImage("media/gfx/steuerrad.png")
+		steeringwheel.x = imageBackground.x + 64
+		steeringwheel.y = imageBackground.y + 64
+		steeringwheel.rotation = 0
+		steeringwheel.label = display.newText(steeringwheel.rotation .. "°", 0, 0, native.systemFont, 32)
+		steeringwheel.label:setReferencePoint(display.CenterReferencePoint)
+		steeringwheel.label.x = steeringwheel.x
+		steeringwheel.label.y = steeringwheel.y
+		---steeringwheel:setTextColor(0, 255, 0)
+
+		local function rotateSteeringWheel(event) 
+			local t = event.target
+			local phase = event.phase
+			local oldRotation = t.rotation
+			print(phase)
+			if(phase == "began") then
+				display.getCurrentStage():setFocus( t, event.id )
+				t.isFocus = true
+				t.x0 = event.x
+			elseif(t.isFocus) then
+				if "moved" == phase then
+					t.rotation = oldRotation + (event.x - t.x0)/500
+					t.label.text = math.floor(t.rotation) .. "°"
+				end
+			end
+			if(event.phase == "ended" or phase == "cancelled") then
+				display.getCurrentStage():setFocus(t, nil )
+				t.isFocus      = false
+			end
+		end	
+
+		steeringwheel:addEventListener("touch", rotateSteeringWheel)
 	end
 
 	if(s == 3) then
@@ -128,8 +162,9 @@ function displayImage(element)
 						t.valueText.text = t.value
 					end
 				end
-			elseif(phase == "ended" or phase == "cancelled") then
-				display.getCurrentStage():setFocus( nil )
+			end
+			if(phase == "ended" or phase == "cancelled") then
+				display.getCurrentStage():setFocus(t, nil )
 				t.isFocus      = false
 			end
 		end	
