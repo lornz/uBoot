@@ -139,8 +139,9 @@ local function readyMessage(content,senderUUID)
 end
 
 local function updateMessage(content, senderUUID)
-    print("Button: "..content.skinID)
-    print(content.state)
+    -- print("Button: "..content.skinID)
+    -- print(content.type)
+    print("button " .. content.skinID .. ": Type = " .. content.type .. ": Value = ".. content.value)
     -- diese empfangenen Werte an die "taskForce" übergeben
 end
 

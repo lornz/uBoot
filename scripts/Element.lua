@@ -27,6 +27,8 @@ function Element:new(sizeX,position)
 
 	element.skinID = chooseSkin(sizeX)
 
+	element.type = 0 -- Typ des Buttons (normaler Button (an/aus), Steuerrad, Pumpe, etc) für die Tasks
+
 	return element
 end
 
@@ -52,6 +54,7 @@ function displayImage(element)
 	imageBackground.y = 72 + (math.floor(element.position/5))*128
 
 	if(s == 1 and id < 150) then
+		element.type = 1 -- Typ des Buttons: 1=An/Aus Button
 		local sheet1 = sprite.newSpriteSheet( "media/gfx/11buttonSprite.png", 96, 96 )
 		local spriteSet1 = sprite.newSpriteSet(sheet1, 1, 2)
 		sprite.add( spriteSet1, "button1", 1, 1, 1, 0 )
@@ -76,19 +79,20 @@ function displayImage(element)
 				button:prepare("button2")
 				button:play()
 				button.state = 1
-				element.state = true
-				sendStuff(element,"update",gameChannel)--TODO: hier Nachricht an Server absetzen über Statusänderung
+				element.value = 1
+				sendStuff(element,"update",gameChannel) --Nachricht an Server absetzen über Statusänderung
 			elseif(state == 1) then
 				button:prepare("button1")
 				button:play()
 				button.state = 0
-				element.state = false
-				sendStuff(element,"update",gameChannel)--TODO: hier Nachricht an Server absetzen über Statusänderung
+				element.value = 0
+				sendStuff(element,"update",gameChannel) -- Nachricht an Server absetzen über Statusänderung
 			end
-			print("button " .. id .. ": state = " .. state)
+			-- print("button " .. id .. ": state = " .. state)
 		end
 		button:addEventListener("tap", buttonTap)
 	elseif(s == 1 and id >= 150) then
+		element.type = 2 -- Typ des Buttons: 2=Steuerrad
 		local steeringwheel = display.newImage("media/gfx/steuerrad.png")
 		steeringwheel.x = imageBackground.x + 64
 		steeringwheel.y = imageBackground.y + 64
@@ -116,6 +120,8 @@ function displayImage(element)
 			if(event.phase == "ended" or phase == "cancelled") then
 				display.getCurrentStage():setFocus(t, nil )
 				t.isFocus      = false
+				element.value = math.floor(t.rotation)
+				sendStuff(element,"update",gameChannel) -- Nachricht an Server absetzen über Statusänderung
 			end
 		end	
 
@@ -123,6 +129,7 @@ function displayImage(element)
 	end
 
 	if(s == 3) then
+		element.type = 3
 		local sheetPumpe = sprite.newSpriteSheet( "media/gfx/roterKnopfSprite.png", 64, 64 )
 		local spriteSetPumpe = sprite.newSpriteSet(sheetPumpe, 1, 2)
 		sprite.add( spriteSetPumpe, "pumpe1", 1, 1, 1, 0 )
@@ -172,6 +179,8 @@ function displayImage(element)
 			if(phase == "ended" or phase == "cancelled") then
 				display.getCurrentStage():setFocus(t, nil )
 				t.isFocus      = false
+				element.value = t.value
+				sendStuff(element,"update",gameChannel) -- Nachricht an Server absetzen über Statusänderung
 			end
 		end	
 
