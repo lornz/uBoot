@@ -48,6 +48,42 @@ local function chooseServer()
 	end
 end
 
+function createGame()
+    connectionMode = 1 -- Server
+    gameChannel = deviceID
+    subscribe(gameChannel)
+    --sendStuff("ping","connect",gameChannel)
+    storyboard.gotoScene( "scripts.SceneWaiting", transitionOptions )
+end
+
+local function joinGame(event)
+    if (event.phase == "ended") then
+        connectionMode = 2 -- Client
+        gameChannel = event.target.text 
+        subscribe(gameChannel)
+        sendStuff("ping","connect",gameChannel)
+        sendStuff(gameChannel,"reply",lobbyChannel)
+        unsubscribe(lobbyChannel)
+        storyboard.gotoScene( "scripts.SceneWaiting", transitionOptions )
+    end
+end
+
+local i = 1
+local function updateLobby()
+    -- zeigt alle verfügbaren Spiele in "games{}" an
+    for key, value in pairs(games) do 
+        print("Spiel "..i..": "..key)
+        if (value.show == true) then
+            local myText = display.newText( key, 50, i*50, nil, display.contentWidth/23 )
+            menuGroup:insert(myText)
+            myText:addEventListener("touch", joinGame)
+            i = i + 1
+        end
+        value.show = false
+    end
+    -- Erweiterung: Spiele die nicht mehr da sind löschen
+end
+
 local function connectMessage(content,senderUUID)
     -- reagiert auf ping/pong Nachrichten
     if(content == "ping") then
@@ -100,41 +136,12 @@ local function readyMessage(content,senderUUID)
     end
 end
 
-function createGame()
-    connectionMode = 1 -- Server
-    gameChannel = deviceID
-    subscribe(gameChannel)
-    --sendStuff("ping","connect",gameChannel)
-    storyboard.gotoScene( "scripts.SceneWaiting", transitionOptions )
+local function updateMessage(content, senderUUID)
+    print("Button: "..content.skinID)
+    print(content.state)
+    -- diese empfangenen Werte an die "taskForce" übergeben
 end
 
-local function joinGame(event)
-    if (event.phase == "ended") then
-        connectionMode = 2 -- Client
-        gameChannel = event.target.text 
-        subscribe(gameChannel)
-        sendStuff("ping","connect",gameChannel)
-        sendStuff(gameChannel,"reply",lobbyChannel)
-        unsubscribe(lobbyChannel)
-        storyboard.gotoScene( "scripts.SceneWaiting", transitionOptions )
-    end
-end
-
-local i = 1
-local function updateLobby()
-    -- zeigt alle verfügbaren Spiele in "games{}" an
-    for key, value in pairs(games) do 
-        print("Spiel "..i..": "..key)
-        if (value.show == true) then
-            local myText = display.newText( key, 50, i*50, nil, display.contentWidth/23 )
-            menuGroup:insert(myText)
-            myText:addEventListener("touch", joinGame)
-            i = i + 1
-        end
-        value.show = false
-    end
-    -- Erweiterung: Spiele die nicht mehr da sind löschen
-end
 local function receiveMessage(channel,content,mode,senderUUID,destination)
     if (channel == gameChannel) then-- Nachrichten je nach"mode" weitergeben
         if (mode == "connect") then
@@ -150,6 +157,13 @@ local function receiveMessage(channel,content,mode,senderUUID,destination)
 
         if (mode == "ready") then
             readyMessage(content,senderUUID)
+        end
+
+        if (mode == "update") then
+            if (connectionMode == 1) then
+                -- updates nur für Server relevant
+                updateMessage(content,senderUUID)
+            end
         end
     end
     if (channel == lobbyChannel) then

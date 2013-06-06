@@ -16,11 +16,11 @@ transitionOptions =
 
 storyboard.gotoScene( "scripts.SceneMenu", transitionOptions )
 
-
+connectedClient = {}
 function initUBoot()
 	-- initialisiert das uBoot bei allen Spielern
 	for key, value in pairs(player) do 
-		local newClient = Client:new()
-		sendStuff(newClient,"init",gameChannel,value.uuid) -- schickt "Board" an alle Spieler
+		connectedClient[key] = Client:new()
+		sendStuff(connectedClient[key],"init",gameChannel,value.uuid) -- schickt "Board" an alle Spieler
     end
 end
