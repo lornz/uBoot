@@ -1,12 +1,18 @@
 local sprite = require("sprite")
 
 Element = {}
-
+usedSkins = {}
 
 local function chooseSkin(sizeX)
 	local skinID = math.random(sizeX*100, (sizeX*100)+99) -- 1 breite Skins bei 100 bis 199
+	if (usedSkins[skinID] == nil) then
+		usedSkins[skinID] = skinID
+		return skinID
+	else
+		chooseSkin(sizeX)
+	end
 
-	return skinID
+	
 end
 
 function Element:new(sizeX,position)
@@ -70,12 +76,14 @@ function displayImage(element)
 				button:prepare("button2")
 				button:play()
 				button.state = 1
-				--TODO: hier Nachricht an Server absetzen über Statusänderung
+				element.state = true
+				sendStuff(element,"update",gameChannel)--TODO: hier Nachricht an Server absetzen über Statusänderung
 			elseif(state == 1) then
 				button:prepare("button1")
 				button:play()
 				button.state = 0
-				--TODO: hier Nachricht an Server absetzen über Statusänderung
+				element.state = false
+				sendStuff(element,"update",gameChannel)--TODO: hier Nachricht an Server absetzen über Statusänderung
 			end
 			print("button " .. id .. ": state = " .. state)
 		end
