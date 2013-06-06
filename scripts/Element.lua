@@ -104,6 +104,7 @@ function displayImage(element)
 			local t = event.target
 			local phase = event.phase
 			if(phase == "began") then
+				display.getCurrentStage():setFocus( t, event.id )
 				t.isFocus = true
 				t.x0 = event.x - t.x
 				t.y0 = event.y - t.y
