@@ -4,15 +4,14 @@ Element = {}
 usedSkins = {}
 
 local function chooseSkin(sizeX)
-	local skinID = math.random(sizeX*100, (sizeX*100)+99) -- 1 breite Skins bei 100 bis 199
+	local skinID = math.random(sizeX*100, (sizeX*100)+100) -- 1 breite Skins bei 100 bis 199
 	if (usedSkins[skinID] == nil) then
 		usedSkins[skinID] = skinID
 		return skinID
 	else
-		chooseSkin(sizeX)
+		print("skinID "..skinID.." already in use - choosing another!")
+		return chooseSkin(sizeX)
 	end
-
-	
 end
 
 function Element:new(sizeX,position)

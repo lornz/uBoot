@@ -14,9 +14,10 @@ function createUUID()
     uuid = multiplayer:UUID()
 end
 
-games = {} -- speichert alle verfügbaren Spiele
-player = {} -- speichert alle anwesenden Spieler
-local playerNumber = 1 -- bisher ungenutzt
+games   = {}                -- speichert alle verfügbaren Spiele
+player  = {}                -- speichert alle anwesenden Spieler
+
+local playerNumber = 1      -- bisher ungenutzt
 local function addPlayer(playerUUID)
 	if (player[playerUUID] == nil) then
 		player[playerUUID] = { uuid = playerUUID, playerNumber = playerNumber, ready = false}
@@ -49,21 +50,20 @@ local function chooseServer()
 end
 
 function createGame()
-    connectionMode = 1 -- Server
-    gameChannel = deviceID
+    connectionMode  = 1 -- Server
+    gameChannel     = deviceID
     subscribe(gameChannel)
-    --sendStuff("ping","connect",gameChannel)
     storyboard.gotoScene( "scripts.SceneWaiting", transitionOptions )
 end
 
 local function joinGame(event)
     if (event.phase == "ended") then
-        connectionMode = 2 -- Client
-        gameChannel = event.target.text 
-        subscribe(gameChannel)
-        sendStuff("ping","connect",gameChannel)
-        sendStuff(gameChannel,"reply",lobbyChannel)
+        --sendStuff(gameChannel,"reply",lobbyChannel)
         unsubscribe(lobbyChannel)
+        connectionMode  = 2 -- Client
+        gameChannel     = event.target.text 
+        subscribe(gameChannel)
+        sendStuff("ping","connect",gameChannel)  
         storyboard.gotoScene( "scripts.SceneWaiting", transitionOptions )
     end
 end
@@ -130,9 +130,11 @@ local function readyMessage(content,senderUUID)
         end
 
     end
-    if (player[senderUUID].ready == false) then
-        player[senderUUID].ready = content -- setze Spieler mit senderUUID auf ready/not-ready
-        checkReadyStatus()
+    if not (player[senderUUID] == nil) then
+        if (player[senderUUID].ready == false) then
+            player[senderUUID].ready = content -- setze Spieler mit senderUUID auf ready/not-ready
+            checkReadyStatus()
+        end
     end
 end
 
@@ -144,25 +146,27 @@ end
 
 local function receiveMessage(channel,content,mode,senderUUID,destination)
     if (channel == gameChannel) then-- Nachrichten je nach"mode" weitergeben
-        if (mode == "connect") then
-            connectMessage(content,senderUUID)
-        end
-
-        if (mode == "init") then
-            if (destination == uuid) then
-                -- ist die Nachricht für mich?
-                initMessage(content,senderUUID)
+        if not (gameChannel == nil) then
+            if (mode == "connect") then
+                connectMessage(content,senderUUID)
             end
-        end
 
-        if (mode == "ready") then
-            readyMessage(content,senderUUID)
-        end
+            if (mode == "init") then
+                if (destination == uuid) then
+                    -- ist die Nachricht für mich?
+                    initMessage(content,senderUUID)
+                end
+            end
 
-        if (mode == "update") then
-            if (connectionMode == 1) then
-                -- updates nur für Server relevant
-                updateMessage(content,senderUUID)
+            if (mode == "ready") then
+                readyMessage(content,senderUUID)
+            end
+
+            if (mode == "update") then
+                if (connectionMode == 1) then
+                    -- updates nur für Server relevant
+                    updateMessage(content,senderUUID)
+                end
             end
         end
     end
@@ -192,7 +196,7 @@ function subscribe(channel)
         end,
         callback = function(message)
         	-- message received -> do something
-            print(message.mode.." Nachricht empfangen in: "..channel)
+            --print(message.mode.." Nachricht empfangen in: "..channel)
         	receiveMessage(message.channel,message.content,message.mode,message.uuid,message.destination)
         end,
         errorback = function()
