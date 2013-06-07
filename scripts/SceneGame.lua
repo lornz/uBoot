@@ -30,6 +30,7 @@ function scene:createScene( event )
         
 
         --subscribe(gameChannel)
+        local commandBase = setupCommandBase(group)
 end
 
 
