@@ -100,40 +100,20 @@ function displayImage(element)
 		---steeringwheel:setTextColor(0, 255, 0)
 
 
-				local directionY = 0
-		local direction X = 0
-		local oldDirectionX = 0
-		local oldDirectionY = 0
 		local oldX = 0
 		local oldY = 0
-		local circleDirection = 0 -- -1 = leftCircle, +1 = rightCircle
-		local 
+		local yLeft = 0
+		local yRight = 0
+		local circulation = 0
 
-		local function getCircleDirection(newX, newY)
-			local tempX =  newX - oldX
-			if(tempX < 0) then
-				if(directionX == 1) then
-					oldDirection = directionX
-					directionX = -1
-				end
-			elseif(tempX > 0)
-				directionX = 1
+		function isBetween(x,z1,z2) 
+			--checks if x is between z1 and z2 (with z1 < z2)
+			if(x >= z1 and x <= z2) then
+				return true
 			else
-				directionX = 0
+				return false
 			end
-
-			local tempY =  newY - oldY
-			if(tempY < 0) then
-				directionY = -1
-			elseif(tempY > 0)
-				directionY = 1
-			else
-				directionY = 0
-			end
-
-			if()
 		end
-
 
 		local function rotateSteeringWheel(event) 
 			local t = event.target
@@ -143,11 +123,32 @@ function displayImage(element)
 				display.getCurrentStage():setFocus( t, event.id )
 				t.isFocus = true
 				t.x0 = event.x
+				t.x5 = event.x + 1
+				oldX = event.x
 			elseif(t.isFocus) then
 				if "moved" == phase then
-					t.rotation = oldRotation + (event.x - t.x0)/500
+					if(isBetween(event.x,t.x0,t.x5)) then
+						if(event.x > oldX) then
+							yRight = event.y
+						elseif(event.x < oldX) then
+							yLeft = event.y
+						end
+					end
+					if(yRight > yLeft) then 
+						circulation = -1
+					elseif(yLeft > yRight) then
+						circulation = 1
+					end
+					print(circulation)
+					if((circulation == 1 and event.x < t.x0) or (circulation == -1 and event.x < t.x0)) then
+						t.rotation = oldRotation + (oldY - event.y)/10
+					else 
+						t.rotation = oldRotation + (event.y - oldY)/10
+					end
 					t.label.text = math.floor(t.rotation) .. "°"
 				end
+				oldX = event.x
+				oldY = event.y
 			end
 			if(event.phase == "ended" or phase == "cancelled") then
 				display.getCurrentStage():setFocus(t, nil )
