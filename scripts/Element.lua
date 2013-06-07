@@ -99,6 +99,42 @@ function displayImage(element)
 		steeringwheel.label.y = steeringwheel.y
 		---steeringwheel:setTextColor(0, 255, 0)
 
+
+				local directionY = 0
+		local direction X = 0
+		local oldDirectionX = 0
+		local oldDirectionY = 0
+		local oldX = 0
+		local oldY = 0
+		local circleDirection = 0 -- -1 = leftCircle, +1 = rightCircle
+		local 
+
+		local function getCircleDirection(newX, newY)
+			local tempX =  newX - oldX
+			if(tempX < 0) then
+				if(directionX == 1) then
+					oldDirection = directionX
+					directionX = -1
+				end
+			elseif(tempX > 0)
+				directionX = 1
+			else
+				directionX = 0
+			end
+
+			local tempY =  newY - oldY
+			if(tempY < 0) then
+				directionY = -1
+			elseif(tempY > 0)
+				directionY = 1
+			else
+				directionY = 0
+			end
+
+			if()
+		end
+
+
 		local function rotateSteeringWheel(event) 
 			local t = event.target
 			local phase = event.phase
