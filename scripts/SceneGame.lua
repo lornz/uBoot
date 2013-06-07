@@ -28,8 +28,12 @@ function scene:createScene( event )
 
         -----------------------------------------------------------------------------
         
-
-        --subscribe(gameChannel)
+        local function initTasksTemp()
+        if(connectionMode == 1) then
+                initTasks()
+        end
+        end
+        timer.performWithDelay( 2000, initTasksTemp ) -- evtl ist Verzögerung nicht notwendig
 end
 
 

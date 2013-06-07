@@ -3,6 +3,23 @@ local sprite = require("sprite")
 Element = {}
 usedSkins = {}
 
+
+local function detectType(s, id)
+	local type
+
+	-- Zuordnung von Type je nach skinID
+	if(s == 1 and id < 150) then		-- Button:		Werte = 1/0 (an/aus)
+		type = 1
+	elseif(s == 1 and id >= 150) then	-- Steuerrad:	Werte = 0-360 (Grad)
+		type = 2		
+	end		
+	if(s == 3)	then					-- Pumpe:		Werte = 0-10 (Füllstand)
+		type = 3 -- 	
+	end
+	
+	return type
+end
+
 local function chooseSkin(sizeX)
 	local skinID = math.random(sizeX*100, (sizeX*100)+100) -- 1 breite Skins bei 100 bis 199
 	if (usedSkins[skinID] == nil) then
@@ -27,7 +44,8 @@ function Element:new(sizeX,position)
 
 	element.skinID = chooseSkin(sizeX)
 
-	element.type = 0 -- Typ des Buttons (normaler Button (an/aus), Steuerrad, Pumpe, etc) für die Tasks
+	element.type = detectType(sizeX,element.skinID) -- Typ des Buttons (normaler Button (an/aus), Steuerrad, Pumpe, etc) für die Tasks
+	-- type automatisch nach skinID ermitteln wäre besser
 
 	return element
 end
@@ -54,7 +72,6 @@ function displayImage(element)
 	imageBackground.y = 72 + (math.floor(element.position/5))*128
 
 	if(s == 1 and id < 150) then
-		element.type = 1 -- Typ des Buttons: 1=An/Aus Button
 		local sheet1 = sprite.newSpriteSheet( "media/gfx/11buttonSprite.png", 96, 96 )
 		local spriteSet1 = sprite.newSpriteSet(sheet1, 1, 2)
 		sprite.add( spriteSet1, "button1", 1, 1, 1, 0 )
@@ -92,7 +109,6 @@ function displayImage(element)
 		end
 		button:addEventListener("tap", buttonTap)
 	elseif(s == 1 and id >= 150) then
-		element.type = 2 -- Typ des Buttons: 2=Steuerrad
 		local steeringwheel = display.newImage("media/gfx/steuerrad.png")
 		steeringwheel.x = imageBackground.x + 64
 		steeringwheel.y = imageBackground.y + 64
@@ -129,7 +145,6 @@ function displayImage(element)
 	end
 
 	if(s == 3) then
-		element.type = 3
 		local sheetPumpe = sprite.newSpriteSheet( "media/gfx/roterKnopfSprite.png", 64, 64 )
 		local spriteSetPumpe = sprite.newSpriteSet(sheetPumpe, 1, 2)
 		sprite.add( spriteSetPumpe, "pumpe1", 1, 1, 1, 0 )
