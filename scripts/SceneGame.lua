@@ -27,10 +27,14 @@ function scene:createScene( event )
         --      Example use-case: Restore 'group' from previously saved state.
 
         -----------------------------------------------------------------------------
-        
-
-        --subscribe(gameChannel)
         local commandBase = setupCommandBase(group)
+        
+        local function initTasksTemp()
+        if(connectionMode == 1) then
+                initTasks()
+        end
+        end
+        timer.performWithDelay( 2000, initTasksTemp ) -- evtl ist Verzögerung nicht notwendig
 end
 
 
