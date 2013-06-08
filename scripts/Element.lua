@@ -3,6 +3,22 @@ local sprite = require("sprite")
 Element = {}
 usedSkins = {}
 
+local function detectType(s, id)
+	local type
+
+	-- Zuordnung von Type je nach skinID
+	if(s == 1 and id < 150) then		-- Button:		Werte = 1/0 (an/aus)
+		type = 1
+	elseif(s == 1 and id >= 150) then	-- Steuerrad:	Werte = 0-360 (Grad)
+		type = 2		
+	end		
+	if(s == 3)	then					-- Pumpe:		Werte = 0-10 (Füllstand)
+		type = 3 	
+	end
+	
+	return type
+end
+
 local function chooseSkin(sizeX)
 	local skinID = math.random(sizeX*100, (sizeX*100)+100) -- 1 breite Skins bei 100 bis 199
 	if (usedSkins[skinID] == nil) then
@@ -26,6 +42,8 @@ function Element:new(sizeX,position)
 	element.value = 0 -- zu Beginn jeder Regler auf Null, jeder Schalter aus
 
 	element.skinID = chooseSkin(sizeX)
+
+	element.type = detectType(sizeX,element.skinID) -- Typ des Buttons (normaler Button (an/aus), Steuerrad, Pumpe, etc) für die Tasks
 
 	return element
 end

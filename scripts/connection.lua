@@ -60,6 +60,7 @@ local function joinGame(event)
     if (event.phase == "ended") then
         --sendStuff(gameChannel,"reply",lobbyChannel)
         unsubscribe(lobbyChannel)
+
         connectionMode  = 2 -- Client
         gameChannel     = event.target.text 
         subscribe(gameChannel)
@@ -100,7 +101,7 @@ local function initMessage(content,senderUUID)
     if (connectionMode == 1) then
         unsubscribe(lobbyChannel)
     end
-
+    
     local i = 1
     while(not(content.board.elements[i] == nil)) do 
         print ("position = " .. content.board.elements[i].position .. " , size = " ..content.board.elements[i].sizeX .. " , skinID = " .. content.board.elements[i].skinID)
@@ -139,9 +140,18 @@ local function readyMessage(content,senderUUID)
 end
 
 local function updateMessage(content, senderUUID)
-    print("Button: "..content.skinID)
-    print(content.state)
+    -- print("Button: "..content.skinID)
+    -- print(content.type)
+    print("button " .. content.skinID .. ": Type = " .. content.type .. ": Value = ".. content.value)
     -- diese empfangenen Werte an die "taskForce" übergeben
+end
+
+local function updateMessage(content, senderUUID)
+    print("button " .. content.skinID .. ": Type = " .. content.type .. ": Value = ".. content.value)
+end
+
+local function taskMessage(content)
+    print("New task: Please adjust element "..content.skinID.." to: "..content.value)
 end
 
 local function receiveMessage(channel,content,mode,senderUUID,destination)
@@ -149,6 +159,7 @@ local function receiveMessage(channel,content,mode,senderUUID,destination)
         if not (gameChannel == nil) then
             if (mode == "connect") then
                 connectMessage(content,senderUUID)
+                print("senderUUID: "..senderUUID)
             end
 
             if (mode == "init") then
@@ -166,6 +177,13 @@ local function receiveMessage(channel,content,mode,senderUUID,destination)
                 if (connectionMode == 1) then
                     -- updates nur für Server relevant
                     updateMessage(content,senderUUID)
+                end
+            end
+
+            if (mode == "task") then
+                if (destination == uuid) then
+                    -- ist die Nachricht für mich?
+                    taskMessage(content)
                 end
             end
         end
