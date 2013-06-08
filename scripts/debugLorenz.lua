@@ -15,3 +15,5 @@ lobbyChannel = "lobby_lorenz"
 
 deviceID = (system.getInfo( "deviceID" ))
 print(deviceID)
+
+--getCurrentStage()
