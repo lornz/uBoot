@@ -14,7 +14,7 @@ local function detectType(s, id)
 		type = 2		
 	end		
 	if(s == 3)	then					-- Pumpe:		Werte = 0-10 (Füllstand)
-		type = 3 -- 	
+		type = 3 	
 	end
 	
 	return type
@@ -45,7 +45,6 @@ function Element:new(sizeX,position)
 	element.skinID = chooseSkin(sizeX)
 
 	element.type = detectType(sizeX,element.skinID) -- Typ des Buttons (normaler Button (an/aus), Steuerrad, Pumpe, etc) für die Tasks
-	-- type automatisch nach skinID ermitteln wäre besser
 
 	return element
 end
@@ -96,16 +95,16 @@ function displayImage(element)
 				button:prepare("button2")
 				button:play()
 				button.state = 1
-				element.value = 1
-				sendStuff(element,"update",gameChannel) --Nachricht an Server absetzen über Statusänderung
+				element.state = true
+				sendStuff(element,"update",gameChannel)--TODO: hier Nachricht an Server absetzen über Statusänderung
 			elseif(state == 1) then
 				button:prepare("button1")
 				button:play()
 				button.state = 0
-				element.value = 0
-				sendStuff(element,"update",gameChannel) -- Nachricht an Server absetzen über Statusänderung
+				element.state = false
+				sendStuff(element,"update",gameChannel)--TODO: hier Nachricht an Server absetzen über Statusänderung
 			end
-			-- print("button " .. id .. ": state = " .. state)
+			print("button " .. id .. ": state = " .. state)
 		end
 		button:addEventListener("tap", buttonTap)
 	elseif(s == 1 and id >= 150) then
@@ -119,6 +118,22 @@ function displayImage(element)
 		steeringwheel.label.y = steeringwheel.y
 		---steeringwheel:setTextColor(0, 255, 0)
 
+
+		local oldX = 0
+		local oldY = 0
+		local yLeft = 0
+		local yRight = 0
+		local circulation = 0
+
+		function isBetween(x,z1,z2) 
+			--checks if x is between z1 and z2 (with z1 < z2)
+			if(x >= z1 and x <= z2) then
+				return true
+			else
+				return false
+			end
+		end
+
 		local function rotateSteeringWheel(event) 
 			local t = event.target
 			local phase = event.phase
@@ -127,17 +142,36 @@ function displayImage(element)
 				display.getCurrentStage():setFocus( t, event.id )
 				t.isFocus = true
 				t.x0 = event.x
+				t.x5 = event.x + 1
+				oldX = event.x
 			elseif(t.isFocus) then
 				if "moved" == phase then
-					t.rotation = oldRotation + (event.x - t.x0)/500
+					if(isBetween(event.x,t.x0,t.x5)) then
+						if(event.x > oldX) then
+							yRight = event.y
+						elseif(event.x < oldX) then
+							yLeft = event.y
+						end
+					end
+					if(yRight > yLeft) then 
+						circulation = -1
+					elseif(yLeft > yRight) then
+						circulation = 1
+					end
+					print(circulation)
+					if((circulation == 1 and event.x < t.x0) or (circulation == -1 and event.x < t.x0)) then
+						t.rotation = oldRotation + (oldY - event.y)/10
+					else 
+						t.rotation = oldRotation + (event.y - oldY)/10
+					end
 					t.label.text = math.floor(t.rotation) .. "°"
 				end
+				oldX = event.x
+				oldY = event.y
 			end
 			if(event.phase == "ended" or phase == "cancelled") then
 				display.getCurrentStage():setFocus(t, nil )
 				t.isFocus      = false
-				element.value = math.floor(t.rotation)
-				sendStuff(element,"update",gameChannel) -- Nachricht an Server absetzen über Statusänderung
 			end
 		end	
 
@@ -194,8 +228,6 @@ function displayImage(element)
 			if(phase == "ended" or phase == "cancelled") then
 				display.getCurrentStage():setFocus(t, nil )
 				t.isFocus      = false
-				element.value = t.value
-				sendStuff(element,"update",gameChannel) -- Nachricht an Server absetzen über Statusänderung
 			end
 		end	
 
