@@ -151,7 +151,9 @@ local function updateMessage(content, senderUUID)
 end
 
 local function taskMessage(content)
-    print("New task: Please adjust element "..content.skinID.." to: "..content.value)
+    local taskString = "Adjust element "..content.skinID.." to: "..content.value
+    --print("New task: Please adjust element "..content.skinID.." to: "..content.value)
+    commandBase.command.text = taskString
 end
 
 local function receiveMessage(channel,content,mode,senderUUID,destination)
