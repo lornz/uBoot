@@ -95,13 +95,15 @@ function displayImage(element)
 				button:play()
 				button.state = 1
 				element.state = true
-				sendStuff(element,"update",gameChannel)--TODO: hier Nachricht an Server absetzen über Statusänderung
+				element.value = 1
+				sendStuff(element,"update",gameChannel) --Nachricht an Server absetzen über Statusänderung
 			elseif(state == 1) then
 				button:prepare("button1")
 				button:play()
 				button.state = 0
 				element.state = false
-				sendStuff(element,"update",gameChannel)--TODO: hier Nachricht an Server absetzen über Statusänderung
+				element.value = 0
+				sendStuff(element,"update",gameChannel) -- Nachricht an Server absetzen über Statusänderung
 			end
 			print("button " .. id .. ": state = " .. state)
 		end
@@ -157,7 +159,7 @@ function displayImage(element)
 					elseif(yLeft > yRight) then
 						circulation = 1
 					end
-					print(circulation)
+					--print(circulation)
 					if((circulation == 1 and event.x < t.x0) or (circulation == -1 and event.x < t.x0)) then
 						t.rotation = oldRotation + (oldY - event.y)/10
 					else 
@@ -171,6 +173,9 @@ function displayImage(element)
 			if(event.phase == "ended" or phase == "cancelled") then
 				display.getCurrentStage():setFocus(t, nil )
 				t.isFocus      = false
+				element.value = math.floor(t.rotation)
+				sendStuff(element,"update",gameChannel) -- Nachricht an Server absetzen über Statusänderung
+
 			end
 		end	
 
@@ -227,6 +232,8 @@ function displayImage(element)
 			if(phase == "ended" or phase == "cancelled") then
 				display.getCurrentStage():setFocus(t, nil )
 				t.isFocus      = false
+				element.value = t.value
+				sendStuff(element,"update",gameChannel) -- Nachricht an Server absetzen über Statusänderung
 			end
 		end	
 

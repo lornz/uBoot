@@ -140,15 +140,11 @@ local function readyMessage(content,senderUUID)
 end
 
 local function updateMessage(content, senderUUID)
-    -- print("Button: "..content.skinID)
-    -- print(content.type)
     print("button " .. content.skinID .. ": Type = " .. content.type .. ": Value = ".. content.value)
     -- diese empfangenen Werte an die "taskForce" übergeben
+    taskDone(content,senderUUID)
 end
 
-local function updateMessage(content, senderUUID)
-    print("button " .. content.skinID .. ": Type = " .. content.type .. ": Value = ".. content.value)
-end
 
 local function taskMessage(content)
     local taskString = "Adjust element "..content.skinID.." to: "..content.value
