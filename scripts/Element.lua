@@ -3,6 +3,39 @@ local sprite = require("sprite")
 Element = {}
 usedSkins = {}
 
+labelBank = {} --labelBank für alle Labels, jedes Label liegt an labelBank[skinID]
+
+buttonLabels = {}
+
+--etwas blöder Code, der hoffentlich bald durch FileReader ersetzt wird
+buttonLabels[1] = "Megaquark"
+buttonLabels[2] = "Quantumbose"
+buttonLabels[3] = "Periskopum"
+buttonLabels[4] ="Hyperdrill"
+buttonLabels[5] ="Gravitator"
+buttonLabels[6] ="Lyghtbums"
+buttonLabels[7] ="Pullmorser"
+buttonLabels[8] ="Zytenborst"
+
+for i = 1, #buttonLabels do 
+	labelBank[100 + i] = buttonLabels[i]
+end
+
+steeringwheelLabels = {}
+
+steeringwheelLabels[1] = "Course"
+steeringwheelLabels[2] = "Engine-Temperatur"
+steeringwheelLabels[3] = "Quantrum"
+steeringwheelLabels[4] = "Steerix"
+steeringwheelLabels[5] = "Controx"
+steeringwheelLabels[6] = "Roboxon"
+steeringwheelLabels[7] = "Billie"
+steeringwheelLabels[8] = "Nuclear Rembose"
+
+for i = 1, #steeringwheelLabels do 
+	labelBank[150 + i] = buttonLabels[i]
+end
+
 local function detectType(s, id)
 	local type
 
@@ -21,6 +54,16 @@ end
 
 local function chooseSkin(sizeX)
 	local skinID = math.random(sizeX*100, (sizeX*100)+100) -- 1 breite Skins bei 100 bis 199
+
+	--es gibt nur bestimmte Anzahl an buttonLabels, daher darf die skinID nicht beliebig groß sein
+	if(skinID < 150) then
+		skinID = math.random(1, #buttonLabels) + 100
+	end
+
+	if(skinID >= 150) then
+		skinID = math.random(1, #steeringwheelLabels) + 150
+	end
+
 	if (usedSkins[skinID] == nil) then
 		usedSkins[skinID] = skinID
 		return skinID
@@ -69,7 +112,7 @@ function displayImage(element)
 	imageBackground.x = 144 + math.mod((element.position-1),4)*128
 	imageBackground.y = 72 + (math.floor(element.position/5))*128
 
-	if(s == 1 and id < 150) then
+	if(element.type == 1) then
 		local sheet1 = sprite.newSpriteSheet( "media/gfx/11buttonSprite.png", 96, 96 )
 		local spriteSet1 = sprite.newSpriteSet(sheet1, 1, 2)
 		sprite.add( spriteSet1, "button1", 1, 1, 1, 0 )
@@ -81,7 +124,7 @@ function displayImage(element)
 		button.y = imageBackground.y + 64
 		button.state = 0
 		button.skinID = element.skinID
-		button.label = display.newText(element.skinID, 0, 0, native.systemFont, 25)
+		button.label = display.newText(labelBank[id], 0, 0, native.systemFont, 25)
 		button.label:setReferencePoint(display.centerReferencePoint)
 		button.label.x = button.x
 		button.label.y = button.y
@@ -106,15 +149,19 @@ function displayImage(element)
 			print("button " .. id .. ": state = " .. state)
 		end
 		button:addEventListener("tap", buttonTap)
-	elseif(s == 1 and id >= 150) then
+	elseif(element.type == 2) then
 		local steeringwheel = display.newImage("media/gfx/steuerrad.png")
 		steeringwheel.x = imageBackground.x + 64
 		steeringwheel.y = imageBackground.y + 64
 		steeringwheel.rotation = 0
-		steeringwheel.label = display.newText(steeringwheel.rotation .. "°", 0, 0, native.systemFont, 32)
+		steeringwheel.label = display.newText(labelBank[id] .. "°", 0, 0, native.systemFont, 32)
 		steeringwheel.label:setReferencePoint(display.CenterReferencePoint)
 		steeringwheel.label.x = steeringwheel.x
-		steeringwheel.label.y = steeringwheel.y
+		steeringwheel.label.y = steeringwheel.y - 34
+		steeringwheel.degrees = display.newText(steeringwheel.rotation .. "°", 0, 0, native.systemFont, 32)
+		steeringwheel.degrees:setReferencePoint(display.CenterReferencePoint)
+		steeringwheel.degrees.x = steeringwheel.x
+		steeringwheel.degrees.y = steeringwheel.y
 		---steeringwheel:setTextColor(0, 255, 0)
 
 
@@ -163,7 +210,7 @@ function displayImage(element)
 					else 
 						t.rotation = oldRotation + (event.y - oldY)/10
 					end
-					t.label.text = math.floor(t.rotation) .. "°"
+					t.degrees.text = math.floor(t.rotation) .. "°"
 				end
 				oldX = event.x
 				oldY = event.y
@@ -177,7 +224,7 @@ function displayImage(element)
 		steeringwheel:addEventListener("touch", rotateSteeringWheel)
 	end
 
-	if(s == 3) then
+	if(element.type == 3) then
 		local sheetPumpe = sprite.newSpriteSheet( "media/gfx/roterKnopfSprite.png", 64, 64 )
 		local spriteSetPumpe = sprite.newSpriteSet(sheetPumpe, 1, 2)
 		sprite.add( spriteSetPumpe, "pumpe1", 1, 1, 1, 0 )
