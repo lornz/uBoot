@@ -147,10 +147,16 @@ end
 
 
 local function taskMessage(content)
+    if not (taskTimer == nil) then
+        timer.cancel(taskTimer)
+    end
+
     local name = labelBank[content.skinID]
-    local taskString = "Adjust "..name.." to: "..content.value
-    --print("New task: Please adjust element "..content.skinID.." to: "..content.value)
+    local taskString = "Adjust "..name.." to "..content.value
     commandBase.command.text = taskString
+
+    taskTime = content.time
+    taskTimer = timer.performWithDelay(1000,decreaseTime,taskTime)
 end
 
 local function receiveMessage(channel,content,mode,senderUUID,destination)
