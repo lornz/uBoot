@@ -29,12 +29,14 @@ function decreaseTime()
    taskTime = taskTime-1
    taskCountdown.text = taskTime
 
-   --update timerBar
-   timerBar.xScale = taskTime/15 --taskTime/initialTime
+   
 
    if(taskTime == 0) then
    		-- Bestrafung!
-   end
+   else
+   		--update timerBar
+   		timerBar.xScale = taskTime/15 --taskTime/initialTime
+	end
 end
 
 function Task:new(element,uuid)
