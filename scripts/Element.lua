@@ -48,6 +48,10 @@ local function detectType(s, id)
 	if(s == 3)	then					-- Pumpe:		Werte = 0-10 (Füllstand)
 		type = 3 	
 	end
+
+	if(s == 2) then
+		type = 4                        --Slider: 		Werte = 1-5
+	end
 	
 	return type
 end
@@ -112,6 +116,8 @@ function displayImage(element)
 	imageBackground.x = 144 + math.mod((element.position-1),4)*128
 	imageBackground.y = 72 + (math.floor(element.position/5))*128
 
+
+
 	if(element.type == 1) then
 		local sheet1 = sprite.newSpriteSheet( "media/gfx/11buttonSprite.png", 96, 96 )
 		local spriteSet1 = sprite.newSpriteSet(sheet1, 1, 2)
@@ -124,10 +130,6 @@ function displayImage(element)
 		button.y = imageBackground.y + 64
 		button.state = 0
 		button.skinID = element.skinID
-		button.label = display.newText(labelBank[id], 0, 0, native.systemFont, 25)
-		button.label:setReferencePoint(display.centerReferencePoint)
-		button.label.x = button.x
-		button.label.y = button.y
 
 		function buttonTap(event)
 			local button = event.target
@@ -154,10 +156,6 @@ function displayImage(element)
 		steeringwheel.x = imageBackground.x + 64
 		steeringwheel.y = imageBackground.y + 64
 		steeringwheel.rotation = 0
-		steeringwheel.label = display.newText(labelBank[id] .. "°", 0, 0, native.systemFont, 32)
-		steeringwheel.label:setReferencePoint(display.CenterReferencePoint)
-		steeringwheel.label.x = steeringwheel.x
-		steeringwheel.label.y = steeringwheel.y - 34
 		steeringwheel.degrees = display.newText(steeringwheel.rotation .. "°", 0, 0, native.systemFont, 32)
 		steeringwheel.degrees:setReferencePoint(display.CenterReferencePoint)
 		steeringwheel.degrees.x = steeringwheel.x
@@ -279,4 +277,66 @@ function displayImage(element)
 
 		pumpe:addEventListener("touch", movePumpe)
 	end
+
+	if(element.type == 4) then
+		local sliderBoard = display.newImage( "media/gfx/sliderBoard.png" )
+		sliderBoard:setReferencePoint(display.CenterReferencePoint)
+		sliderBoard.x = imageBackground.x + 128
+		sliderBoard.y = imageBackground.y + 64
+
+		local marker = display.newImage( "media/gfx/greenMarker2.png" )
+		marker:setReferencePoint(display.CenterReferencePoint)
+		-- 1 -> -85 , 2 -> -44, 3 -> 0, 4 -> 45, 5 -> +85
+		marker.x = sliderBoard.x - 85
+		marker.y = sliderBoard.y
+		marker.value = 1
+
+		local function moveMarker(event) 
+			local t = event.target
+			local phase = event.phase
+			if(phase == "began") then
+				display.getCurrentStage():setFocus( t, event.id )
+				t.isFocus = true
+				t.x0 = event.x - t.x
+				t.y0 = event.y - t.y
+			elseif(t.isFocus) then
+				if "moved" == phase then
+					t.x = event.x - t.x0
+					if(t.x - sliderBoard.x < -85) then
+						t.x = sliderBoard.x - 85
+					end
+					if(t.x - sliderBoard.x > 85) then
+						t.x = sliderBoard.x + 85
+					end
+				end
+			end
+			if(phase == "ended") then
+				distance = t.x - sliderBoard.x
+					
+				if(distance < -62) then
+					t.x = sliderBoard.x - 85
+					t.value = 1
+				elseif(distance >= -62 and distance < -22) then
+					t.x = sliderBoard.x - 44
+					t.value = 2
+				elseif(distance >= -22 and distance < 22) then
+					t.x = sliderBoard.x
+					t.value = 3
+				elseif(distance >= 22 and distance < 62) then
+					t.x = sliderBoard.x + 45
+					t.value = 4
+				elseif(distance >= 62) then
+					t.x = sliderBoard.x + 85
+					t.value = 5
+				end
+				display.getCurrentStage():setFocus(t, nil )
+				t.isFocus      = false
+			end
+		end
+		marker:addEventListener("touch", moveMarker)
+	end
+	elementLabel = display.newText(labelBank[id], imageBackground.x, imageBackground.y, native.systemFont, 24)
+	elementLabel:setReferencePoint(display.CenterReferencePoint)
+	elementLabel.x = imageBackground.x + (s*64)
+	print(elementLabel.x)
 end
