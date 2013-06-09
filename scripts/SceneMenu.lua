@@ -52,8 +52,25 @@ function scene:createScene( event )
         menuGroup:insert(textStart3)
 
         subscribe(lobbyChannel)
+
+        local function alive(game)
+                --print("noch da? ")
+                --print(games[game])
+                timer.cancel(games[game].timer)
+                games[game].text:removeSelf()
+                games[game] = nil
+                updateLobby()
+        end
+
         local function discover()
                 sendStuff("hi","discover",lobbyChannel)
+                for key, value in pairs(games) do
+                        --print(games[key])
+                        games[key].timer = timer.performWithDelay( 2000, function() 
+                                                                                alive(key)
+                                                                        end
+                                , 1)
+                end
         end
         discoverTimer = timer.performWithDelay( 2000, discover, 0)
 end

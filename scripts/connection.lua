@@ -59,6 +59,7 @@ end
 
 local function joinGame(event)
     if (event.phase == "ended") then
+        timer.cancel(discoverTimer)
         unsubscribe(lobbyChannel)
 
         connectionMode  = 2 -- Client
@@ -69,15 +70,17 @@ local function joinGame(event)
     end
 end
 
-local i = 1
-local function updateLobby()
+
+function updateLobby()
+    local i = 1
     -- zeigt alle verfügbaren Spiele in "games{}" an
     for key, value in pairs(games) do 
-        print("Spiel "..i..": "..key)
+        --print("Spiel "..i..": "..key)
         if (value.show == true) then
-            local myText = display.newText( key, 50, i*50, nil, display.contentWidth/23 )
-            menuGroup:insert(myText)
-            myText:addEventListener("touch", joinGame)
+            -- local myText = display.newText( key, 50, i*50, nil, display.contentWidth/23 )
+            games[key].text = display.newText( key, 50, i*50, nil, display.contentWidth/23 )
+            menuGroup:insert(games[key].text)
+            games[key].text:addEventListener("touch", joinGame)
             i = i + 1
         end
         value.show = false
@@ -211,6 +214,12 @@ local function receiveMessage(channel,content,mode,senderUUID,destination)
                 games[content] = {content = content, show = true}
                 updateLobby()
             end
+
+            if (games[content].timer ~= nil) then
+                timer.cancel(games[content].timer)
+                print("still alive")
+            end
+
         end
     end
 end
