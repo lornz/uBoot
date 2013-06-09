@@ -3,6 +3,39 @@ local sprite = require("sprite")
 Element = {}
 usedSkins = {}
 
+labelBank = {} --labelBank für alle Labels, jedes Label liegt an labelBank[skinID]
+
+buttonLabels = {}
+
+--etwas blöder Code, der hoffentlich bald durch FileReader ersetzt wird
+buttonLabels[1] = "Megaquark"
+buttonLabels[2] = "Quantumbose"
+buttonLabels[3] = "Periskopum"
+buttonLabels[4] ="Hyperdrill"
+buttonLabels[5] ="Gravitator"
+buttonLabels[6] ="Lyghtbums"
+buttonLabels[7] ="Pullmorser"
+buttonLabels[8] ="Zytenborst"
+
+for i = 1, #buttonLabels do 
+	labelBank[100 + i] = buttonLabels[i]
+end
+
+steeringwheelLabels = {}
+
+steeringwheelLabels[1] = "Course"
+steeringwheelLabels[2] = "Engine-Temperatur"
+steeringwheelLabels[3] = "Quantrum"
+steeringwheelLabels[4] = "Steerix"
+steeringwheelLabels[5] = "Controx"
+steeringwheelLabels[6] = "Roboxon"
+steeringwheelLabels[7] = "Billie"
+steeringwheelLabels[8] = "Nuclear Rembose"
+
+for i = 1, #steeringwheelLabels do 
+	labelBank[150 + i] = buttonLabels[i]
+end
+
 local function detectType(s, id)
 	local type
 
@@ -15,12 +48,26 @@ local function detectType(s, id)
 	if(s == 3)	then					-- Pumpe:		Werte = 0-10 (Füllstand)
 		type = 3 	
 	end
+
+	if(s == 2) then
+		type = 4                        --Slider: 		Werte = 1-5
+	end
 	
 	return type
 end
 
 local function chooseSkin(sizeX)
 	local skinID = math.random(sizeX*100, (sizeX*100)+100) -- 1 breite Skins bei 100 bis 199
+
+	--es gibt nur bestimmte Anzahl an buttonLabels, daher darf die skinID nicht beliebig groß sein
+	if(skinID < 150) then
+		skinID = math.random(1, #buttonLabels) + 100
+	end
+
+	if(skinID >= 150) then
+		skinID = math.random(1, #steeringwheelLabels) + 150
+	end
+
 	if (usedSkins[skinID] == nil) then
 		usedSkins[skinID] = skinID
 		return skinID
@@ -69,7 +116,9 @@ function displayImage(element)
 	imageBackground.x = 144 + math.mod((element.position-1),4)*128
 	imageBackground.y = 72 + (math.floor(element.position/5))*128
 
-	if(s == 1 and id < 150) then
+
+
+	if(element.type == 1) then
 		local sheet1 = sprite.newSpriteSheet( "media/gfx/11buttonSprite.png", 96, 96 )
 		local spriteSet1 = sprite.newSpriteSet(sheet1, 1, 2)
 		sprite.add( spriteSet1, "button1", 1, 1, 1, 0 )
@@ -81,10 +130,6 @@ function displayImage(element)
 		button.y = imageBackground.y + 64
 		button.state = 0
 		button.skinID = element.skinID
-		button.label = display.newText(element.skinID, 0, 0, native.systemFont, 25)
-		button.label:setReferencePoint(display.centerReferencePoint)
-		button.label.x = button.x
-		button.label.y = button.y
 
 		function buttonTap(event)
 			local button = event.target
@@ -95,28 +140,26 @@ function displayImage(element)
 				button:play()
 				button.state = 1
 				element.state = true
-				element.value = 1
-				sendStuff(element,"update",gameChannel) --Nachricht an Server absetzen über Statusänderung
+				sendStuff(element,"update",gameChannel)--TODO: hier Nachricht an Server absetzen über Statusänderung
 			elseif(state == 1) then
 				button:prepare("button1")
 				button:play()
 				button.state = 0
 				element.state = false
-				element.value = 0
-				sendStuff(element,"update",gameChannel) -- Nachricht an Server absetzen über Statusänderung
+				sendStuff(element,"update",gameChannel)--TODO: hier Nachricht an Server absetzen über Statusänderung
 			end
 			print("button " .. id .. ": state = " .. state)
 		end
 		button:addEventListener("tap", buttonTap)
-	elseif(s == 1 and id >= 150) then
+	elseif(element.type == 2) then
 		local steeringwheel = display.newImage("media/gfx/steuerrad.png")
 		steeringwheel.x = imageBackground.x + 64
 		steeringwheel.y = imageBackground.y + 64
 		steeringwheel.rotation = 0
-		steeringwheel.label = display.newText(steeringwheel.rotation .. "°", 0, 0, native.systemFont, 32)
-		steeringwheel.label:setReferencePoint(display.CenterReferencePoint)
-		steeringwheel.label.x = steeringwheel.x
-		steeringwheel.label.y = steeringwheel.y
+		steeringwheel.degrees = display.newText(steeringwheel.rotation .. "°", 0, 0, native.systemFont, 32)
+		steeringwheel.degrees:setReferencePoint(display.CenterReferencePoint)
+		steeringwheel.degrees.x = steeringwheel.x
+		steeringwheel.degrees.y = steeringwheel.y
 		---steeringwheel:setTextColor(0, 255, 0)
 
 
@@ -159,13 +202,12 @@ function displayImage(element)
 					elseif(yLeft > yRight) then
 						circulation = 1
 					end
-					--print(circulation)
 					if((circulation == 1 and event.x < t.x0) or (circulation == -1 and event.x < t.x0)) then
 						t.rotation = oldRotation + (oldY - event.y)/10
 					else 
 						t.rotation = oldRotation + (event.y - oldY)/10
 					end
-					t.label.text = math.floor(t.rotation) .. "°"
+					t.degrees.text = math.floor(t.rotation) .. "°"
 				end
 				oldX = event.x
 				oldY = event.y
@@ -173,16 +215,13 @@ function displayImage(element)
 			if(event.phase == "ended" or phase == "cancelled") then
 				display.getCurrentStage():setFocus(t, nil )
 				t.isFocus      = false
-				element.value = math.floor(t.rotation)
-				sendStuff(element,"update",gameChannel) -- Nachricht an Server absetzen über Statusänderung
-
 			end
 		end	
 
 		steeringwheel:addEventListener("touch", rotateSteeringWheel)
 	end
 
-	if(s == 3) then
+	if(element.type == 3) then
 		local sheetPumpe = sprite.newSpriteSheet( "media/gfx/roterKnopfSprite.png", 64, 64 )
 		local spriteSetPumpe = sprite.newSpriteSet(sheetPumpe, 1, 2)
 		sprite.add( spriteSetPumpe, "pumpe1", 1, 1, 1, 0 )
@@ -232,11 +271,71 @@ function displayImage(element)
 			if(phase == "ended" or phase == "cancelled") then
 				display.getCurrentStage():setFocus(t, nil )
 				t.isFocus      = false
-				element.value = t.value
-				sendStuff(element,"update",gameChannel) -- Nachricht an Server absetzen über Statusänderung
 			end
 		end	
 
 		pumpe:addEventListener("touch", movePumpe)
 	end
+
+	if(element.type == 4) then
+		local sliderBoard = display.newImage( "media/gfx/sliderBoard.png" )
+		sliderBoard:setReferencePoint(display.CenterReferencePoint)
+		sliderBoard.x = imageBackground.x + 128
+		sliderBoard.y = imageBackground.y + 64
+
+		local marker = display.newImage( "media/gfx/greenMarker2.png" )
+		marker:setReferencePoint(display.CenterReferencePoint)
+		-- 1 -> -85 , 2 -> -44, 3 -> 0, 4 -> 45, 5 -> +85
+		marker.x = sliderBoard.x - 85
+		marker.y = sliderBoard.y
+		marker.value = 1
+
+		local function moveMarker(event) 
+			local t = event.target
+			local phase = event.phase
+			if(phase == "began") then
+				display.getCurrentStage():setFocus( t, event.id )
+				t.isFocus = true
+				t.x0 = event.x - t.x
+				t.y0 = event.y - t.y
+			elseif(t.isFocus) then
+				if "moved" == phase then
+					t.x = event.x - t.x0
+					if(t.x - sliderBoard.x < -85) then
+						t.x = sliderBoard.x - 85
+					end
+					if(t.x - sliderBoard.x > 85) then
+						t.x = sliderBoard.x + 85
+					end
+				end
+			end
+			if(phase == "ended") then
+				distance = t.x - sliderBoard.x
+					
+				if(distance < -62) then
+					t.x = sliderBoard.x - 85
+					t.value = 1
+				elseif(distance >= -62 and distance < -22) then
+					t.x = sliderBoard.x - 44
+					t.value = 2
+				elseif(distance >= -22 and distance < 22) then
+					t.x = sliderBoard.x
+					t.value = 3
+				elseif(distance >= 22 and distance < 62) then
+					t.x = sliderBoard.x + 45
+					t.value = 4
+				elseif(distance >= 62) then
+					t.x = sliderBoard.x + 85
+					t.value = 5
+				end
+				display.getCurrentStage():setFocus(t, nil )
+				t.isFocus      = false
+			end
+		end
+		marker:addEventListener("touch", moveMarker)
+	end
+	elementLabel = display.newText(labelBank[id], imageBackground.x, imageBackground.y, native.systemFont, 24)
+	elementLabel:setReferencePoint(display.CenterReferencePoint)
+	elementLabel.x = imageBackground.x + (s*64)
+	print(elementLabel.x)
 end
