@@ -202,7 +202,6 @@ function displayImage(element)
 					elseif(yLeft > yRight) then
 						circulation = 1
 					end
-					print(circulation)
 					if((circulation == 1 and event.x < t.x0) or (circulation == -1 and event.x < t.x0)) then
 						t.rotation = oldRotation + (oldY - event.y)/10
 					else 
