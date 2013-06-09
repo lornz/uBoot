@@ -33,11 +33,18 @@ function scene:createScene( event )
         local commandBase = setupCommandBase(group)
         
         local function initTasksTemp()
-        if(connectionMode == 1) then
-                initTasks()
+                if(connectionMode == 1) then
+                        initTasks()
+                end
         end
-        end
-        timer.performWithDelay( 2000, initTasksTemp ) -- evtl ist Verzögerung nicht notwendig
+        timer.performWithDelay( 1000, initTasksTemp ) -- evtl ist Verzögerung nicht notwendig
+
+        taskCountdown = display.newText("15", 0, 0, native.systemFont, 32)
+        taskCountdown:setReferencePoint(display.CenterReferencePoint)
+        taskCountdown.x = _W
+        taskCountdown.y = _H+_H-50
+        taskCountdown:setTextColor(0,255,0)
+        group:insert(taskCountdown)
 end
 
 
