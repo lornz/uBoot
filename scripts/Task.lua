@@ -10,6 +10,8 @@ local function chooseValue(type)
 		value = math.random(0,360)
 	elseif (type == 3) then
 		value = math.random(1,10)
+	elseif (type == 4) then
+		value = math.random(1,5)
 	else
 		value = 999
 	end
