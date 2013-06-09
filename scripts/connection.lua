@@ -53,12 +53,12 @@ function createGame()
     connectionMode  = 1 -- Server
     gameChannel     = deviceID
     subscribe(gameChannel)
+    sendStuff("ping","connect",gameChannel)
     storyboard.gotoScene( "scripts.SceneWaiting", transitionOptions )
 end
 
 local function joinGame(event)
     if (event.phase == "ended") then
-        --sendStuff(gameChannel,"reply",lobbyChannel)
         unsubscribe(lobbyChannel)
 
         connectionMode  = 2 -- Client
