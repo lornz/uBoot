@@ -1,19 +1,12 @@
---gameChannel = "test"
---subscribe(gameChannel)
---timer.performWithDelay( 5000, chooseServer, 0)
-
-local testBoard = { elements = { 	sizeX = 20,	
-									position = 2,
-									state = true,
-									value = 0, -- zu Beginn jeder Regler auf Null, jeder Schalter aus
-									skinID = 5,} 
-								}
-
-
 createUUID()
 lobbyChannel = "lobby_lorenz"
-
 deviceID = (system.getInfo( "deviceID" ))
-print(deviceID)
+--print(deviceID)
 
---getCurrentStage()
+function printTasksDebug()
+	for key, value1 in pairs(Task) do 
+		print("Task __ must be __")
+		print(key)
+		print(key.value)
+	end
+end

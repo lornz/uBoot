@@ -7,5 +7,6 @@ function Client:new(uuid)
 	client.uuid = uuid
 	-- task
 	-- id
-	return client
+	Client[uuid] = client
+		return client
 end
