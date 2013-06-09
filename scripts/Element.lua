@@ -140,15 +140,15 @@ function displayImage(element)
 				button:play()
 				button.state = 1
 				element.state = true
-				sendStuff(element,"update",gameChannel)--TODO: hier Nachricht an Server absetzen über Statusänderung
 			elseif(state == 1) then
 				button:prepare("button1")
 				button:play()
 				button.state = 0
 				element.state = false
-				sendStuff(element,"update",gameChannel)--TODO: hier Nachricht an Server absetzen über Statusänderung
 			end
 			print("button " .. id .. ": state = " .. state)
+			element.value = button.state
+			sendStuff(element,"update",gameChannel)-- Nachricht an Server absetzen über Statusänderung
 		end
 		button:addEventListener("tap", buttonTap)
 	elseif(element.type == 2) then
@@ -215,6 +215,8 @@ function displayImage(element)
 			if(event.phase == "ended" or phase == "cancelled") then
 				display.getCurrentStage():setFocus(t, nil )
 				t.isFocus      = false
+				element.value = math.floor(t.rotation)
+				sendStuff(element,"update",gameChannel) --Nachricht an Server absetzen über Statusänderung
 			end
 		end	
 
@@ -253,14 +255,14 @@ function displayImage(element)
 					--t.value = t.value - 1
 					if(t.x > imageBackground.x + 384 - 64) then
 						if(t.state == 0) then
-							t.value = t.value - 1
+							t.value = t.value + 1
 						end
 						t.x = imageBackground.x + 384 - 64
 						t.state = 1
 						t.valueText.text = t.value
 					elseif(t.x < imageBackground.x + 64) then
 						if(t.state == 1) then
-							t.value = t.value - 1
+							t.value = t.value + 1
 						end
 						t.x = imageBackground.x + 64
 						t.state = 0
@@ -271,6 +273,8 @@ function displayImage(element)
 			if(phase == "ended" or phase == "cancelled") then
 				display.getCurrentStage():setFocus(t, nil )
 				t.isFocus      = false
+				element.value = t.value
+				sendStuff(element,"update",gameChannel) --Nachricht an Server absetzen über Statusänderung
 			end
 		end	
 
@@ -328,6 +332,8 @@ function displayImage(element)
 					t.x = sliderBoard.x + 85
 					t.value = 5
 				end
+				element.value = t.value
+				sendStuff(element,"update",gameChannel) --Nachricht an Server absetzen über Statusänderung
 				display.getCurrentStage():setFocus(t, nil )
 				t.isFocus      = false
 			end

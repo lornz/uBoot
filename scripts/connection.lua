@@ -147,7 +147,8 @@ end
 
 
 local function taskMessage(content)
-    local taskString = "Adjust element "..content.skinID.." to: "..content.value
+    local name = labelBank[content.skinID]
+    local taskString = "Adjust "..name.." to: "..content.value
     --print("New task: Please adjust element "..content.skinID.." to: "..content.value)
     commandBase.command.text = taskString
 end
