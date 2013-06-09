@@ -45,6 +45,8 @@ function scene:createScene( event )
         taskCountdown.y = _H+_H-50
         taskCountdown:setTextColor(0,255,0)
         group:insert(taskCountdown)
+
+        timerVisual(group)
 end
 
 

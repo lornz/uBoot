@@ -28,9 +28,13 @@ end
 function decreaseTime()
    taskTime = taskTime-1
    taskCountdown.text = taskTime
+
+   --update timerBar
+   timerBar.xScale = taskTime/15 --taskTime/initialTime
+
    if(taskTime == 0) then
    		-- Bestrafung!
-   	end
+   end
 end
 
 function Task:new(element,uuid)
@@ -86,4 +90,10 @@ function taskDone(element,senderUUID)
 			end
 		end
 	end
+end
+
+function timerVisual(parentGroup)
+	timerBarLength = 512
+	timerBar = display.newRect( parentGroup, 144, 8, timerBarLength, 64 )
+	timerBar:setFillColor(0, 255, 0, 100)
 end
