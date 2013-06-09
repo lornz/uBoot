@@ -92,6 +92,8 @@ function Element:new(sizeX,position)
 
 	element.type = detectType(sizeX,element.skinID) -- Typ des Buttons (normaler Button (an/aus), Steuerrad, Pumpe, etc) für die Tasks
 
+	Element[element.skinID] = element
+
 	return element
 end
 

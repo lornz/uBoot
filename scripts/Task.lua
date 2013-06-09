@@ -2,7 +2,7 @@ Task = {}
 
 local function chooseValue(type,currentValue)
 	local value
-	print("type = "..tostring(type))
+	--print("type = "..tostring(type))
 	
 	if (type == 1) then
 		value = math.random (0,1)
@@ -77,17 +77,17 @@ function taskDone(element,senderUUID)
 	-- löscht einen Task für ein Element, wenn er erfüllt wurde und erzeugt einen neuen
 	for key, value in pairs(Task) do 
 		if (key.skinID == element.skinID) then
-			print("neuer Wert: "..tostring(element.value) )
-			print("zu erreichender Wert: "..tostring(key.value) )
+			--print("neuer Wert: "..tostring(element.value) )
+			--print("zu erreichender Wert: "..tostring(key.value) )
 			if (element.value == key.value) then
-				print("Task erfüllt")
+				print("Task erfüllt, sende neuen")
 
 				local randomClient = math.random(1,#connectedClient) -- wähle ein Zufälligen Clienten aus
 				local randomElement = math.random(1,#connectedClient[randomClient].board.elements) -- wählt ein zufälliges Board von dem Clienten aus
 				local tempTask = Task:new(connectedClient[randomClient].board.elements[randomElement],Task[key].uuid)
 
 				sendStuff(tempTask,"task",gameChannel,Task[key].uuid)
-				print("Neuer Task versendet!")
+				--print("Neuer Task versendet!")
 				Task[key] = nil -- alten Task löschen
 			end
 		end

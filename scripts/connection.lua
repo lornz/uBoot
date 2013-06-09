@@ -112,6 +112,7 @@ end
 
 local function readyMessage(content,senderUUID)
     -- reagiert auf "ready" Nachrichten
+    local players = 0
     local function checkReadyStatus()
         local startGame = true
         -- prüft, ob alle Spieler (auch man selbst) "Ready" sind
@@ -119,14 +120,16 @@ local function readyMessage(content,senderUUID)
             if (value.ready == false) then
                 startGame = false
             end
+            players = players + 1
         end
 
         if (startGame == true) then
             --chooseServer() -- bestimme wer Server ist
-            if (connectionMode == 1) then
+            if (connectionMode == 1) and (players > 1) then
                 -- Nur der Server prüft ob ALLE ready sind, und startet das Spiel dann
                 print("Spiel kann starten!!!")
                 initUBoot()
+                print("Anzahl verbundene Spieler: "..players)
             end
         end
 
@@ -140,11 +143,12 @@ local function readyMessage(content,senderUUID)
 end
 
 local function updateMessage(content, senderUUID)
-    print("button " .. content.skinID .. ": Type = " .. content.type .. ": Value = ".. content.value)
+    --print("button " .. content.skinID .. ": Type = " .. content.type .. ": Value = ".. content.value)
+    
     -- diese empfangenen Werte an die "taskForce" übergeben
+    Element[content.skinID].value = content.value -- Wert updaten (für Task erstellung)
     taskDone(content,senderUUID)
 end
-
 
 local function taskMessage(content)
     if not (taskTimer == nil) then
