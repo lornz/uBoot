@@ -4,9 +4,10 @@ require("scripts.Element")
 require("scripts.connection")
 --require("scripts.game")
 require("scripts.Task")
-require("scripts.debugLorenz")
+require("scripts.Level")
 require("scripts.Command")
 require("scripts.FileAccess")
+require("scripts.debugLorenz")
 
 storyboard = require( "storyboard" )
 
