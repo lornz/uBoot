@@ -28,27 +28,6 @@ local function addPlayer(playerUUID)
 	end
 end
 
-local function chooseServer()
-    -- ermittelt wer Server ist und wer Client ist
-	local temp = uuid
-
-    -- kleinste uuid in der Liste aller "player" finden
-	for key, value in pairs(player) do 
-		if (key < temp) then
-			temp = key
-		end
-	end
-	print("server uuid: "..temp)
-    print("eigene uuid: "..uuid)
-	if (temp == uuid) then
-		print("Hurra, ich bin der Server!")
-        connectionMode = 1 --server
-	else
-		print("Hurra, ich bin nur Client!")
-        connectionMode = 2 --client
-	end
-end
-
 function createGame()
     connectionMode  = 1 -- Server
     gameChannel     = deviceID
@@ -117,17 +96,17 @@ local function readyMessage(content,senderUUID)
     -- reagiert auf "ready" Nachrichten
     local players = 0
     local function checkReadyStatus()
-        local startGame = true
         -- prüft, ob alle Spieler (auch man selbst) "Ready" sind
+        local startGame = true
         for key, value in pairs(player) do 
             if (value.ready == false) then
                 startGame = false
-            end
-            players = players + 1
+            else 
+                players = players + 1    
+            end     
         end
 
         if (startGame == true) then
-            --chooseServer() -- bestimme wer Server ist
             if (connectionMode == 1) and (players > 1) then
                 -- Nur der Server prüft ob ALLE ready sind, und startet das Spiel dann
                 print("Spiel kann starten!!!")
@@ -137,8 +116,12 @@ local function readyMessage(content,senderUUID)
         end
 
     end
+
     if not (player[senderUUID] == nil) then
         if (player[senderUUID].ready == false) then
+            player[senderUUID].ready = content -- setze Spieler mit senderUUID auf ready/not-ready
+            checkReadyStatus()
+        elseif (player[senderUUID].ready == true) then
             player[senderUUID].ready = content -- setze Spieler mit senderUUID auf ready/not-ready
             checkReadyStatus()
         end

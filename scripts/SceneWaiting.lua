@@ -34,10 +34,19 @@ function scene:createScene( event )
         textStart.x =  display.viewableContentWidth/2
         textStart.y =  display.viewableContentHeight/2
         group:insert(textStart)
+
+        local imReady = false
         local function textStartTap(event)
                 if(event.phase == "ended") then
-                        textStart.text = "I'm ready"
-                        sendStuff(true,"ready",gameChannel)
+                        if (imReady == false) then
+                                imReady = true
+                                textStart.text = "I'm ready"
+                                sendStuff(imReady,"ready",gameChannel)
+                        elseif (imReady == true) then
+                                imReady = false
+                                textStart.text = "Ready?"
+                                sendStuff(imReady,"ready",gameChannel)
+                        end
                 end
         end
         textStart:addEventListener("touch", textStartTap)
