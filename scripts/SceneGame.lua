@@ -31,7 +31,8 @@ function scene:createScene( event )
 
         -----------------------------------------------------------------------------
         local commandBase = setupCommandBase(group)
-        
+
+                
         local function initTasksTemp()
                 if(connectionMode == 1) then
                         initTasks()

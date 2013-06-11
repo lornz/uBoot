@@ -28,7 +28,7 @@ function scene:createScene( event )
 
         -----------------------------------------------------------------------------
 
-        --Provisorium!!!
+        --##READY BUTTON## (Provisorium)
         local textStart = display.newText("Ready?", 0, 0, native.systemFont, 72)
         textStart:setReferencePoint(display.centerReferencePoint)
         textStart.x =  display.viewableContentWidth/2
@@ -42,11 +42,23 @@ function scene:createScene( event )
         end
         textStart:addEventListener("touch", textStartTap)
 
+        --##ROOM NAME##
         local roomName = display.newText("uBoot: "..gameChannel, 0, 0, native.systemFont, 30)
         roomName:setReferencePoint(display.centerReferencePoint)
         roomName.x =  display.viewableContentWidth/2
         roomName.y =  50
         group:insert(roomName)
+
+        -- ##GAME FUNCTIONS##
+        connectedClient = {}
+        function initUBoot()    -- initialisiert das uBoot bei allen Spielern
+                local i = 1
+                for key, value in pairs(player) do 
+                        connectedClient[i] =  Client:new(value.uuid)
+                        sendStuff(connectedClient[i],"init",gameChannel,value.uuid) -- schickt "Board" an alle Spieler
+                        i = i + 1
+                end
+        end
 end
 
 
