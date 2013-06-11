@@ -21,7 +21,7 @@ local scene = storyboard.newScene()
 function scene:createScene( event )
         local group = self.view
 
-        function getCurrentGroup()
+        function getCurrentGroup() --not in use?!
                 return group
         end
         -----------------------------------------------------------------------------
@@ -30,9 +30,12 @@ function scene:createScene( event )
         --      Example use-case: Restore 'group' from previously saved state.
 
         -----------------------------------------------------------------------------
+
+        -- ## KOMMANDO ZEILE ##
         local commandBase = setupCommandBase(group)
 
-                
+        
+        -- ## TASK  FUNCTIONS ##   
         local function initTasksTemp()
                 if(connectionMode == 1) then
                         initTasks()
@@ -48,6 +51,15 @@ function scene:createScene( event )
         group:insert(taskCountdown)
 
         timerVisual(group)
+
+        function drawElements(content)
+                local i = 1
+                while(not(content.board.elements[i] == nil)) do 
+                print ("position = " .. content.board.elements[i].position .. " , size = " ..content.board.elements[i].sizeX .. " , skinID = " .. content.board.elements[i].skinID)
+                displayImage(content.board.elements[i],group)
+                i = i + 1
+                end
+        end
 end
 
 

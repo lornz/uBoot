@@ -98,7 +98,7 @@ function Element:new(sizeX,position)
 end
 
 
-function displayImage(element)
+function displayImage(element,group)
 	local id = element.skinID
 	local s = element.sizeX
 	print("s = " .. s)
@@ -117,6 +117,7 @@ function displayImage(element)
 	imageBackground:setReferencePoint(display.TopLeftReferencePoint)
 	imageBackground.x = 144 + math.mod((element.position-1),4)*128
 	imageBackground.y = 72 + (math.floor(element.position/5))*128
+	group:insert(imageBackground)
 
 
 
@@ -132,6 +133,7 @@ function displayImage(element)
 		button.y = imageBackground.y + 64
 		button.state = 0
 		button.skinID = element.skinID
+		group:insert(button)
 
 		function buttonTap(event)
 			local button = event.target
@@ -153,7 +155,9 @@ function displayImage(element)
 			sendStuff(element,"update",gameChannel)-- Nachricht an Server absetzen über Statusänderung
 		end
 		button:addEventListener("tap", buttonTap)
-	elseif(element.type == 2) then
+	end
+
+	if(element.type == 2) then
 		local steeringwheel = display.newImage("media/gfx/steuerrad.png")
 		steeringwheel.x = imageBackground.x + 64
 		steeringwheel.y = imageBackground.y + 64
@@ -162,6 +166,8 @@ function displayImage(element)
 		steeringwheel.degrees:setReferencePoint(display.CenterReferencePoint)
 		steeringwheel.degrees.x = steeringwheel.x
 		steeringwheel.degrees.y = steeringwheel.y
+		group:insert(steeringwheel)
+		group:insert(steeringwheel.degrees)
 		---steeringwheel:setTextColor(0, 255, 0)
 
 
@@ -242,6 +248,8 @@ function displayImage(element)
 		pumpe.valueText.x = imageBackground.x + 192
 		pumpe.valueText.y = imageBackground.y + 64
 		pumpe.skinID = element.skinID
+		group:insert(pumpe)
+		group:insert(pumpe.valueText)
 
 		local function movePumpe(event) 
 			local t = event.target
@@ -288,6 +296,7 @@ function displayImage(element)
 		sliderBoard:setReferencePoint(display.CenterReferencePoint)
 		sliderBoard.x = imageBackground.x + 128
 		sliderBoard.y = imageBackground.y + 64
+		group:insert(sliderBoard)
 
 		local marker = display.newImage( "media/gfx/greenMarker2.png" )
 		marker:setReferencePoint(display.CenterReferencePoint)
@@ -295,6 +304,7 @@ function displayImage(element)
 		marker.x = sliderBoard.x - 85
 		marker.y = sliderBoard.y
 		marker.value = 1
+		group:insert(marker)
 
 		local function moveMarker(event) 
 			local t = event.target
@@ -342,8 +352,10 @@ function displayImage(element)
 		end
 		marker:addEventListener("touch", moveMarker)
 	end
+	
 	elementLabel = display.newText(labelBank[id], imageBackground.x, imageBackground.y, native.systemFont, 24)
 	elementLabel:setReferencePoint(display.CenterReferencePoint)
 	elementLabel.x = imageBackground.x + (s*64)
 	print(elementLabel.x)
+	group:insert(elementLabel)
 end

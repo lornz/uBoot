@@ -84,12 +84,8 @@ local function initMessage(content,senderUUID)
         unsubscribe(lobbyChannel)
     end
     
-    local i = 1
-    while(not(content.board.elements[i] == nil)) do 
-        print ("position = " .. content.board.elements[i].position .. " , size = " ..content.board.elements[i].sizeX .. " , skinID = " .. content.board.elements[i].skinID)
-        displayImage(content.board.elements[i])
-        i = i + 1
-    end
+    drawElements(content)
+    
 end
 
 local function readyMessage(content,senderUUID)
