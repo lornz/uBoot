@@ -21,6 +21,9 @@ sliderLabels = loadLabels("sliderLabels.txt", 200)
 pumpeLabels = loadLabels("pumpeLabels.txt", 300)
 dummyLabels = loadLabels("dummyLabels.txt", 400)
 
+for i = 1, #dummyLabels do
+	print(dummyLabels[i])
+end
 
 local function detectType(s, id)
 	local type
@@ -62,7 +65,7 @@ local function chooseSkin(sizeX)
 		skinID = math.random(1, #pumpeLabels) + 300
 	end
 
-	if(skinId >= 400 and skinID < 500) then
+	if(skinID >= 400 and skinID < 500) then
 		skinID = math.random(1, #dummyLabels) + 400
 	end
 
