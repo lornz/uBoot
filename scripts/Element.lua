@@ -1,40 +1,26 @@
 local sprite = require("sprite")
+require("scripts.FileAccess")
 
 Element = {}
 usedSkins = {}
 
 labelBank = {} --labelBank für alle Labels, jedes Label liegt an labelBank[skinID]
 
-buttonLabels = {}
-
---etwas blöder Code, der hoffentlich bald durch FileReader ersetzt wird
-buttonLabels[1] = "Megaquark"
-buttonLabels[2] = "Quantumbose"
-buttonLabels[3] = "Periskopum"
-buttonLabels[4] ="Hyperdrill"
-buttonLabels[5] ="Gravitator"
-buttonLabels[6] ="Lyghtbums"
-buttonLabels[7] ="Pullmorser"
-buttonLabels[8] ="Zytenborst"
-
-for i = 1, #buttonLabels do 
-	labelBank[100 + i] = buttonLabels[i]
+local function loadLabels(labelList, labelBankStartIndex) 
+	labelList = lines_from(labelList, system.ResourceDirectory)
+	labelList.bankIndex = labelBankStartIndex
+	for i = 1, #labelList do
+		labelBank[labelBankStartIndex + i] = labelList[i]
+	end
+	return labelList
 end
 
-steeringwheelLabels = {}
+buttonLabels = loadLabels("buttonLabels.txt", 100)
+steeringwheelLabels = loadLabels("steeringwheelLabels.txt", 150)
+sliderLabels = loadLabels("sliderLabels.txt", 200)
+pumpeLabels = loadLabels("pumpeLabels.txt", 300)
+dummyLabels = loadLabels("dummyLabels.txt", 400)
 
-steeringwheelLabels[1] = "Course"
-steeringwheelLabels[2] = "Engine-Temperatur"
-steeringwheelLabels[3] = "Quantrum"
-steeringwheelLabels[4] = "Steerix"
-steeringwheelLabels[5] = "Controx"
-steeringwheelLabels[6] = "Roboxon"
-steeringwheelLabels[7] = "Billie"
-steeringwheelLabels[8] = "Nuclear Rembose"
-
-for i = 1, #steeringwheelLabels do 
-	labelBank[150 + i] = buttonLabels[i]
-end
 
 local function detectType(s, id)
 	local type
@@ -64,9 +50,22 @@ local function chooseSkin(sizeX)
 		skinID = math.random(1, #buttonLabels) + 100
 	end
 
-	if(skinID >= 150) then
+	if(skinID >= 150 and skinID < 200) then
 		skinID = math.random(1, #steeringwheelLabels) + 150
 	end
+
+	if(skinID >= 200 and skinID < 300) then
+		skinID = math.random(1, #sliderLabels) + 200
+	end
+
+	if(skinID >= 300 and skinID < 400) then
+		skinID = math.random(1, #pumpeLabels) + 300
+	end
+
+	if(skinId >= 400 and skinID < 500) then
+		skinID = math.random(1, #dummyLabels) + 400
+	end
+
 
 	if (usedSkins[skinID] == nil) then
 		usedSkins[skinID] = skinID
@@ -352,7 +351,7 @@ function displayImage(element,group)
 		end
 		marker:addEventListener("touch", moveMarker)
 	end
-	
+	print(id)
 	elementLabel = display.newText(labelBank[id], imageBackground.x, imageBackground.y, native.systemFont, 24)
 	elementLabel:setReferencePoint(display.CenterReferencePoint)
 	elementLabel.x = imageBackground.x + (s*64)
