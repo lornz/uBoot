@@ -1,5 +1,6 @@
 local sprite = require("sprite")
 require("scripts.FileAccess")
+require("scripts.Elements.Button")
 
 Element = {}
 usedSkins = {}
@@ -100,6 +101,7 @@ function Element:new(sizeX,position)
 end
 
 
+
 function displayImage(element,group)
 	local id = element.skinID
 	local s = element.sizeX
@@ -116,47 +118,16 @@ function displayImage(element,group)
 	else
 		print("couldn't find matching background image")
 	end
+	
 	imageBackground:setReferencePoint(display.TopLeftReferencePoint)
 	imageBackground.x = 144 + math.mod((element.position-1),4)*128
 	imageBackground.y = 72 + (math.floor(element.position/5))*128
 	group:insert(imageBackground)
-
+	
 
 
 	if(element.type == 1) then
-		local sheet1 = sprite.newSpriteSheet( "media/gfx/11buttonSprite.png", 96, 96 )
-		local spriteSet1 = sprite.newSpriteSet(sheet1, 1, 2)
-		sprite.add( spriteSet1, "button1", 1, 1, 1, 0 )
-		sprite.add( spriteSet1, "button2", 2, 1, 1, 0 )  
-		local button = sprite.newSprite( spriteSet1 )
-		button:prepare("button1")
-		button:play()       
-		button.x = imageBackground.x + 64
-		button.y = imageBackground.y + 64
-		button.state = 0
-		button.skinID = element.skinID
-		group:insert(button)
-
-		function buttonTap(event)
-			local button = event.target
-			local state = event.target.state
-			local id = event.target.skinID
-			if(state == 0) then
-				button:prepare("button2")
-				button:play()
-				button.state = 1
-				element.state = true
-			elseif(state == 1) then
-				button:prepare("button1")
-				button:play()
-				button.state = 0
-				element.state = false
-			end
-			print("button " .. id .. ": state = " .. state)
-			element.value = button.state
-			sendStuff(element,"update",gameChannel)-- Nachricht an Server absetzen über Statusänderung
-		end
-		button:addEventListener("tap", buttonTap)
+		createButton(imageBackground,element,group)
 	end
 
 	if(element.type == 2) then
