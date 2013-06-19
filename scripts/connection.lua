@@ -11,7 +11,14 @@ multiplayer = pubnub.new({
 })
 
 function createUUID()
-    uuid = multiplayer:UUID()
+    if "Win" == system.getInfo( "platformName" ) then
+        uuid = math.random(1,1000) --
+    elseif "Android" == system.getInfo( "platformName" ) then
+        --uuid = multiplayer:UUID() -- alte Methode über pubNub
+        uuid = deviceID -- neue Methode über Geräte ID
+    end
+    print("UUID: "..uuid)
+    
 end
 
 games   = {}                -- speichert alle verfügbaren Spiele
