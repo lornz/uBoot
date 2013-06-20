@@ -55,7 +55,7 @@ function scene:createScene( event )
         function drawElements(content)
                 local i = 1
                 while(not(content.board.elements[i] == nil)) do 
-                print ("position = " .. content.board.elements[i].position .. " , size = " ..content.board.elements[i].sizeX .. " , skinID = " .. content.board.elements[i].skinID)
+                --print ("position = " .. content.board.elements[i].position .. " , size = " ..content.board.elements[i].sizeX .. " , skinID = " .. content.board.elements[i].skinID)
                 displayImage(content.board.elements[i],group)
                 i = i + 1
                 end
