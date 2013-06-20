@@ -1,6 +1,6 @@
 local sprite = require("sprite")
 
-function loadButtonSprite(element) 
+local function setupButton(element, imageBackground, group) 
 	local sheet1 = sprite.newSpriteSheet( "media/gfx/11buttonSprite.png", 96, 96 )
 	local spriteSet1 = sprite.newSpriteSet(sheet1, 1, 2)
 	sprite.add( spriteSet1, "button1", 1, 1, 1, 0 )
@@ -12,18 +12,19 @@ function loadButtonSprite(element)
 		button.prepare("button2")
 	end
 	button:play()
-	return button
-end
-
-function createButton(imageBackground, element, group)
-	button = loadButtonSprite(element)       
 	button.x = imageBackground.x + 64
 	button.y = imageBackground.y + 64
 	button.state = element.value
 	button.skinID = element.skinID
 	group:insert(button)
+	return button
+end
 
+function createButton(imageBackground, element, group)
+	button = setupButton(element, imageBackground, group)       
+	
 
+	--Button Funcionality
 	function buttonTap(event)
 		local button = event.target
 		local state = event.target.state
