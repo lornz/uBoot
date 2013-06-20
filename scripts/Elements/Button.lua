@@ -40,8 +40,8 @@ function createButton(imageBackground, element, group)
 			button.state = 0
 			element.state = false
 		end
+		element.value = button.state
+		sendStuff(element,"update",gameChannel)-- Nachricht an Server absetzen über Statusänderung
 	end
-	element.value = button.state
-	sendStuff(element,"update",gameChannel)-- Nachricht an Server absetzen über Statusänderung
 	button:addEventListener("tap", buttonTap)
 end
