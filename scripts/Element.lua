@@ -4,6 +4,7 @@ require("scripts.Elements.Button")
 require("scripts.Elements.Steeringwheel")
 require("scripts.Elements.Pumpe")
 require("scripts.Elements.Slider")
+require("scripts.Elements.BinaryControl")
 
 Element = {}
 usedSkins = {}
@@ -23,11 +24,7 @@ buttonLabels = loadLabels("buttonLabels.txt", 100)
 steeringwheelLabels = loadLabels("steeringwheelLabels.txt", 150)
 sliderLabels = loadLabels("sliderLabels.txt", 200)
 pumpeLabels = loadLabels("pumpeLabels.txt", 300)
-dummyLabels = loadLabels("dummyLabels.txt", 400)
-
-for i = 1, #dummyLabels do
-	print(dummyLabels[i])
-end
+binaryLabels = loadLabels("binaryLabels.txt", 400)
 
 local function detectType(s, id)
 	local type
@@ -45,7 +42,11 @@ local function detectType(s, id)
 	if(s == 2) then
 		type = 4                        --Slider: 		Werte = 1-5
 	end
-	
+
+	if(s == 4) then
+		type = 5 						--BinaryControl: Werte 0-15
+	end
+	--type = 5 --debug UNBEDINGT WIEDER ENTFERNEN!!!
 	return type
 end
 
@@ -70,7 +71,7 @@ local function chooseSkin(sizeX)
 	end
 
 	if(skinID >= 400 and skinID < 500) then
-		skinID = math.random(1, #dummyLabels) + 400
+		skinID = math.random(1, #binaryLabels) + 400
 	end
 
 
@@ -143,6 +144,10 @@ function displayImage(element,group)
 
 	if(element.type == 4) then
 		createSlider(imageBackground, element, group)
+	end
+
+	if(element.type == 5) then
+		createBinaryControl(imageBackground, element, group)
 	end
 
 	print(id)
