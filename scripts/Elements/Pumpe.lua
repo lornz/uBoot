@@ -1,5 +1,7 @@
 local sprite = require("sprite")
 
+local ventilSpeed = 0.2
+
 local function setupPumpe(imageBackground, group, element)
 	local sheetPumpe = sprite.newSpriteSheet( "media/gfx/roterKnopfSprite.png", 64, 64 )
 	local spriteSetPumpe = sprite.newSpriteSet(sheetPumpe, 1, 2)
@@ -77,11 +79,11 @@ local function setupVentilFunctionality(ventil, element, pumpe)
 		local t = pumpe
 		if(touching == true) then
 			--pumpenwert verringern und anzeigen
-			t.value = t.value - 1
+			t.value = t.value - ventilSpeed
 			if(t.value < 0) then
 				t.value = 0
 			end
-			t.valueText.text = t.value
+			t.valueText.text = math.floor(t.value)
 		end
 	end
 	Runtime:addEventListener("enterFrame", decreasePumpe)
@@ -98,6 +100,7 @@ local function setupVentilFunctionality(ventil, element, pumpe)
 			print(touching)
 			touching = false
 			--informiere server
+			t.value = math.floor(t.value)
 			element.value = t.value
 			sendStuff(element,"update",gameChannel) --Nachricht an Server absetzen über Statusänderung
 		end
