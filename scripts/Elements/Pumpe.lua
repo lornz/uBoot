@@ -10,7 +10,7 @@ local function setupPumpe(imageBackground, group, element)
 	pumpe:play()       
 	pumpe.x = imageBackground.x + 64
 	pumpe.y = imageBackground.y + 64
-	pumpe.value = 0
+	pumpe.value = element.value
 	pumpe.state = 0
 	pumpe.valueText = display.newText(element.value, 0, 0, native.systemFont, 64)
 	pumpe.valueText:setReferencePoint(display.CenterReferencePoint)
