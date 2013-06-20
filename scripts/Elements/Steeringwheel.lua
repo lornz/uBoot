@@ -65,6 +65,11 @@ local function setupSteeringwheelFunctionality(steeringwheel, element)
 				else 
 					t.rotation = oldRotation + (event.y - oldY)/10
 				end
+				if(t.rotation < 0) then
+					t.rotation = 359
+				elseif(t.rotation >= 360) then
+					t.rotation = 0
+				end
 				t.degrees.text = math.floor(t.rotation) .. "°"
 			end
 			oldX = event.x
