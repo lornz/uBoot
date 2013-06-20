@@ -19,10 +19,17 @@ local function setupPumpe(imageBackground, group, element)
 	pumpe.skinID = element.skinID
 	group:insert(pumpe)
 	group:insert(pumpe.valueText)
-	return pumpe
+
+	--Ventil
+	local ventil = display.newImage("media/gfx/pumpeVentil.png")
+	ventil:setReferencePoint(display.CenterReferencePoint)
+	ventil.x = pumpe.x + 384-120
+	ventil.y = pumpe.y
+	group:insert(ventil)
+	return pumpe, ventil
 end
 
-local function setupPumpeFunctionality(pump, element, imageBackground)
+local function setupPumpeFunctionality(pumpe, element, imageBackground)
 	local function movePumpe(event) 
 		local t = event.target
 		local phase = event.phase
@@ -35,11 +42,11 @@ local function setupPumpeFunctionality(pump, element, imageBackground)
 			if "moved" == phase then
 				t.x = event.x - t.x0
 				--t.value = t.value - 1
-				if(t.x > imageBackground.x + 384 - 64) then
+				if(t.x > imageBackground.x + 384 - 128) then
 					if(t.state == 0) then
 						t.value = t.value + 1
 					end
-					t.x = imageBackground.x + 384 - 64
+					t.x = imageBackground.x + 384 - 128
 					t.state = 1
 					t.valueText.text = t.value
 				elseif(t.x < imageBackground.x + 64) then
@@ -51,6 +58,8 @@ local function setupPumpeFunctionality(pump, element, imageBackground)
 					t.valueText.text = t.value
 				end
 			end
+		elseif(phase == "moved") then
+			
 		end
 		if(phase == "ended" or phase == "cancelled") then
 			display.getCurrentStage():setFocus(t, nil )
@@ -62,7 +71,39 @@ local function setupPumpeFunctionality(pump, element, imageBackground)
 	pumpe:addEventListener("touch", movePumpe)
 end
 
+local function setupVentilFunctionality(ventil, element, pumpe)
+	local touching = false
+	local function decreasePumpe(event)
+		local t = pumpe
+		if(touching == true) then
+			--pumpenwert verringern und anzeigen
+			t.value = t.value - 1
+			t.valueText.text = t.value
+		end
+	end
+	Runtime:addEventListener("enterFrame", decreasePumpe)
+	
+	local function touchVentil(event)
+		local phase = event.phase
+		local t = pumpe
+		touching = false
+		if(phase == "began") then
+			touching = true
+			print(touching)
+		end
+		if(phase == "ended") then
+			print(touching)
+			touching = false
+			--informiere server
+			element.value = t.value
+			sendStuff(element,"update",gameChannel) --Nachricht an Server absetzen über Statusänderung
+		end
+	end
+	ventil:addEventListener("touch", touchVentil)
+end
+
 function createPumpe(imageBackground, element, group)
-	pumpe = setupPumpe(imageBackground, group, element)
-	setupPumpeFunctionality(pump, element, imageBackground)
+	local pumpe,ventil = setupPumpe(imageBackground, group, element)
+	setupPumpeFunctionality(pumpe, element, imageBackground)
+	setupVentilFunctionality(ventil, element, pumpe)
 end
