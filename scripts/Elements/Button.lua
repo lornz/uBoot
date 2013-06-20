@@ -9,7 +9,7 @@ local function setupButton(element, imageBackground, group)
 	if(element.value == 0) then
 		button:prepare("button1")
 	elseif(element.value == 1) then
-		button.prepare("button2")
+		button:prepare("button2")
 	end
 	button:play()
 	button.x = imageBackground.x + 64
