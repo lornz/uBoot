@@ -26,64 +26,6 @@ sliderLabels = loadLabels("sliderLabels.txt", 200)
 pumpeLabels = loadLabels("pumpeLabels.txt", 300)
 binaryLabels = loadLabels("binaryLabels.txt", 400)
 
---[[
-local function detectType(s, id)
-	local type
-
-	-- Zuordnung von Type je nach skinID
-	if(s == 1 and id < 150) then		-- Button:		Werte = 1/0 (an/aus)
-		type = 1
-	elseif(s == 1 and id >= 150) then	-- Steuerrad:	Werte = 0-360 (Grad)
-		type = 2		
-	end		
-	if(s == 3)	then					-- Pumpe:		Werte = 0-10 (Füllstand)
-		type = 3 	
-	end
-
-	if(s == 2) then
-		type = 4                        --Slider: 		Werte = 1-5
-	end
-
-	if(s == 4) then
-		type = 5 						--BinaryControl: Werte 0-15
-	end
-	return type
-end
-
-local function chooseSkin(sizeX)
-	local skinID = math.random(sizeX*100, (sizeX*100)+100) -- 1 breite Skins bei 100 bis 199
-
-	--es gibt nur bestimmte Anzahl an buttonLabels, daher darf die skinID nicht beliebig groß sein
-	if(skinID < 150) then
-		skinID = math.random(1, #buttonLabels) + 100
-	end
-
-	if(skinID >= 150 and skinID < 200) then
-		skinID = math.random(1, #steeringwheelLabels) + 150
-	end
-
-	if(skinID >= 200 and skinID < 300) then
-		skinID = math.random(1, #sliderLabels) + 200
-	end
-
-	if(skinID >= 300 and skinID < 400) then
-		skinID = math.random(1, #pumpeLabels) + 300
-	end
-
-	if(skinID >= 400 and skinID < 500) then
-		skinID = math.random(1, #binaryLabels) + 400
-	end
-
-
-	if (usedSkins[skinID] == nil) then
-		usedSkins[skinID] = skinID
-		return skinID
-	else
-		print("skinID "..skinID.." already in use - choosing another!")
-		return chooseSkin(sizeX)
-	end
-end]]--
-
 function getAllowedValues(elementType,currentValue)
 	-- gibt für einen bestimmten Element-type einen zufälligen erlaubten Wert zurück 
 	-- der vom aktuellen Wert verschieden ist
@@ -102,8 +44,6 @@ function getAllowedValues(elementType,currentValue)
 	elseif (elementType == 5) then
 		-- BINARY --
 		value = math.random(0,15)
-	else
-		value = math.random(900,999)
 	end
 
 	if (value == currentValue) then
@@ -115,47 +55,61 @@ function getAllowedValues(elementType,currentValue)
 end
 
 local function chooseElement(sizeX)
-	local skinID = math.random(sizeX*100, (sizeX*100)+100) -- 1 breite Skins bei 100 bis 199
-	local elementType = nil
 
-	--es gibt nur bestimmte Anzahl an buttonLabels, daher darf die skinID nicht beliebig groß sein
-	if(skinID < 150) then
-		-- TOGGLE BUTTON --
-		elementType = 1
-		skinID = math.random(1, #buttonLabels) + 100
+	local function validSkinID(skinID)
+		if (usedSkins[skinID] == nil) then
+			usedSkins[skinID] = skinID
+			return true
+		else
+			print("skinID in use")
+			return false
+		end
 	end
 
-	if(skinID >= 150 and skinID < 200) then
-		-- STEERING WHEEL --
-		elementType = 2
-		skinID = math.random(1, #steeringwheelLabels) + 150
-	end
+	local function randomSkinID(sizeX)
+		local skinID = math.random(sizeX*100, (sizeX*100)+100) -- 1 breite Skins bei 100 bis 199
+		local elementType = nil
 
-	if(skinID >= 200 and skinID < 300) then
-		-- SLIDER --
-		elementType = 4
-		skinID = math.random(1, #sliderLabels) + 200
-	end
+		--es gibt nur bestimmte Anzahl an buttonLabels, daher darf die skinID nicht beliebig groß sein
+		if(skinID < 150) then
+			-- TOGGLE BUTTON --
+			elementType = 1
+			skinID = math.random(1, #buttonLabels) + 100
+		end
 
-	if(skinID >= 300 and skinID < 400) then
-		-- PUMPE --
-		elementType = 3
-		skinID = math.random(1, #pumpeLabels) + 300
-	end
+		if(skinID >= 150 and skinID < 200) then
+			-- STEERING WHEEL --
+			elementType = 2
+			skinID = math.random(1, #steeringwheelLabels) + 150
+		end
 
-	if(skinID >= 400 and skinID < 500) then
-		-- Binary --
-		elementType = 5
-		skinID = math.random(1, #binaryLabels) + 400
-	end
+		if(skinID >= 200 and skinID < 300) then
+			-- SLIDER --
+			elementType = 4
+			skinID = math.random(1, #sliderLabels) + 200
+		end
 
-	if (usedSkins[skinID] == nil) then
-		usedSkins[skinID] = skinID
+		if(skinID >= 300 and skinID < 400) then
+			-- PUMPE --
+			elementType = 3
+			skinID = math.random(1, #pumpeLabels) + 300
+		end
+
+		if(skinID >= 400 and skinID < 500) then
+			-- Binary --
+			elementType = 5
+			skinID = math.random(1, #binaryLabels) + 400
+		end
+
 		return skinID, elementType
-	else
-		print("skinID "..skinID.." already in use - choosing another!")
-		return chooseElement(sizeX), nil
 	end
+
+	skinID, elementType = randomSkinID(sizeX)
+	while (not(validSkinID(skinID))) do
+		skinID, elementType = randomSkinID(sizeX)
+	end
+
+	return skinID, elementType
 end
 
 function Element:new(sizeX,position)
@@ -169,7 +123,7 @@ function Element:new(sizeX,position)
 
 	element.skinID, element.type = chooseElement(sizeX)
 
-	element.value = getAllowedValues(element.type,99999)
+	element.value = getAllowedValues(element.type,999)
 
 	Element[element.skinID] = element
 
