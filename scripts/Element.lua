@@ -26,6 +26,7 @@ sliderLabels = loadLabels("sliderLabels.txt", 200)
 pumpeLabels = loadLabels("pumpeLabels.txt", 300)
 binaryLabels = loadLabels("binaryLabels.txt", 400)
 
+--[[
 local function detectType(s, id)
 	local type
 
@@ -82,6 +83,80 @@ local function chooseSkin(sizeX)
 		print("skinID "..skinID.." already in use - choosing another!")
 		return chooseSkin(sizeX)
 	end
+end]]--
+
+function getAllowedValues(elementType,currentValue)
+	-- gibt für einen bestimmten Element-type einen zufälligen erlaubten Wert zurück 
+	-- der vom aktuellen Wert verschieden ist
+	if (elementType == 1) then
+		-- TOGGLE BUTTON --
+		value = math.random (0,1)
+	elseif (elementType == 2) then
+		-- STEERING WHEEL --
+		value = math.random(0,360)
+	elseif (elementType == 3) then
+		-- PUMPE --
+		value = math.random(1,10)
+	elseif (elementType == 4) then
+		-- SLIDER --
+		value = math.random(1,5)
+	elseif (elementType == 5) then
+		-- BINARY --
+		value = math.random(0,15)
+	else
+		value = math.random(900,999)
+	end
+
+	if (value == currentValue) then
+		print("Wert "..value.." bereits gesetzt, wähle neuen")
+		return getAllowedValues(elementType,currentValue)
+	else
+		return value
+	end
+end
+
+local function chooseElement(sizeX)
+	local skinID = math.random(sizeX*100, (sizeX*100)+100) -- 1 breite Skins bei 100 bis 199
+	local elementType = nil
+
+	--es gibt nur bestimmte Anzahl an buttonLabels, daher darf die skinID nicht beliebig groß sein
+	if(skinID < 150) then
+		-- TOGGLE BUTTON --
+		elementType = 1
+		skinID = math.random(1, #buttonLabels) + 100
+	end
+
+	if(skinID >= 150 and skinID < 200) then
+		-- STEERING WHEEL --
+		elementType = 2
+		skinID = math.random(1, #steeringwheelLabels) + 150
+	end
+
+	if(skinID >= 200 and skinID < 300) then
+		-- SLIDER --
+		elementType = 4
+		skinID = math.random(1, #sliderLabels) + 200
+	end
+
+	if(skinID >= 300 and skinID < 400) then
+		-- PUMPE --
+		elementType = 3
+		skinID = math.random(1, #pumpeLabels) + 300
+	end
+
+	if(skinID >= 400 and skinID < 500) then
+		-- Binary --
+		elementType = 5
+		skinID = math.random(1, #binaryLabels) + 400
+	end
+
+	if (usedSkins[skinID] == nil) then
+		usedSkins[skinID] = skinID
+		return skinID, elementType
+	else
+		print("skinID "..skinID.." already in use - choosing another!")
+		return chooseElement(sizeX), nil
+	end
 end
 
 function Element:new(sizeX,position)
@@ -91,13 +166,11 @@ function Element:new(sizeX,position)
 
 	element.position = position
 
-	element.state = true
+	element.state = true -- nicht in Benutzung?
 
-	element.value = 0 -- zu Beginn jeder Regler auf Null, jeder Schalter aus
+	element.skinID, element.type = chooseElement(sizeX)
 
-	element.skinID = chooseSkin(sizeX)
-
-	element.type = detectType(sizeX,element.skinID) -- Typ des Buttons (normaler Button (an/aus), Steuerrad, Pumpe, etc) für die Tasks
+	element.value = getAllowedValues(element.type,99999)
 
 	Element[element.skinID] = element
 
