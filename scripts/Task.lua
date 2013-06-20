@@ -1,6 +1,6 @@
 Task = {}
 
-local function chooseValue(type,currentValue)
+--[[local function chooseValue(type,currentValue) -- NICHT MEHR IN BENUTZUNG
 	local value
 	--print("type = "..tostring(type))
 	
@@ -22,7 +22,7 @@ local function chooseValue(type,currentValue)
 	else
 		return value
 	end
-end
+end--]]
 
 
 function decreaseTime()
@@ -48,7 +48,7 @@ function Task:new(element,uuid)
 
 	task.skinID = element.skinID -- ID des ELements, auf das sich der Task bezieht
 	
-	task.value = chooseValue(element.type,element.value)
+	task.value = getAllowedValues(element.type,element.value)
 
 	task.uuid = uuid -- welche uuid bekommt den task angezeigt
 
