@@ -1,6 +1,23 @@
 local sprite = require("sprite")
 
-function setupSlider(imageBackground, group) 
+function initMarkerDisplay(marker, sliderBoard)
+	-- 1 -> -85 , 2 -> -44, 3 -> 0, 4 -> 45, 5 -> +85
+	if(marker.value == 1) then
+		marker.x = sliderBoard.x - 85
+	elseif(marker.value == 2) then
+		marker.x = sliderBoard.x - 44
+	elseif(marker.value == 3) then
+		marker.x = sliderBoard.x
+	elseif(marker.value == 4) then
+		marker.x = sliderBoard.x + 45
+	elseif(marker.value == 5) then
+		marker.x = sliderBoard.x + 85
+	end
+	marker.y = sliderBoard.y
+	return marker
+end
+
+function setupSlider(imageBackground, group, element) 
 	local sliderBoard = display.newImage( "media/gfx/sliderBoard.png" )
 	sliderBoard:setReferencePoint(display.CenterReferencePoint)
 	sliderBoard.x = imageBackground.x + 128
@@ -9,10 +26,8 @@ function setupSlider(imageBackground, group)
 
 	local marker = display.newImage( "media/gfx/greenMarker2.png" )
 	marker:setReferencePoint(display.CenterReferencePoint)
-	-- 1 -> -85 , 2 -> -44, 3 -> 0, 4 -> 45, 5 -> +85
-	marker.x = sliderBoard.x - 85
-	marker.y = sliderBoard.y
-	marker.value = 1
+	marker.value = element.value
+	marker = initMarkerDisplay(marker, sliderBoard)
 	group:insert(marker)
 	return marker, sliderBoard
 end
@@ -66,6 +81,6 @@ function setupSliderFunctionality(marker, sliderBoard, element)
 end
 
 function createSlider(imageBackground, element, group)
-	marker, sliderBoard = setupSlider(imageBackground, group)
+	marker, sliderBoard = setupSlider(imageBackground, group, element)
 	setupSliderFunctionality(marker, sliderBoard, element)
 end

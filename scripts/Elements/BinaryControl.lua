@@ -9,7 +9,7 @@ local function setupBinaryControl(element, imageBackground, group)
 	board.y = imageBackground.y + 64
 	board.xScale = 2
 	board.yScale = 2
-	board.value = 0
+	board.value = element.value
 	group:insert(board)
 
 	local sheet1 = sprite.newSpriteSheet( "media/gfx/binaryButton.png", 32, 32 )
@@ -17,17 +17,25 @@ local function setupBinaryControl(element, imageBackground, group)
 	sprite.add( spriteSet1, "an", 1, 1, 1, 0 )
 	sprite.add( spriteSet1, "aus", 2, 1, 1, 0 )
 
+	local initValue = element.value
 	local buttons = {} 
 	--buttons erzeugen und korrekt positionieren
 	for i = 1, 4 do
 		buttons[i] = {}
 		buttons[i] = sprite.newSprite( spriteSet1 )
-		buttons[i].state = false
-		buttons[i]:prepare("aus")
+		buttons[i].number = math.pow(2,4-i)
+		if(buttons[i].number <= initValue) then
+			initValue = initValue - buttons[i].number
+			buttons[i].state = true
+			buttons[i]:prepare("an")
+		else
+			buttons[i].state = false
+			buttons[i]:prepare("aus")
+		end
 		buttons[i]:play()
 		buttons[i].x = board.x + (i-2)*128 - 64
 		buttons[i].y = board.y - 16
-		buttons[i].number = math.pow(2,4-i)
+		
 		print(buttons[i].number)
 		group:insert(buttons[i])
 	end

@@ -1,5 +1,10 @@
 local sprite = require("sprite")
 
+local function updateRotation(newRotation)
+	steeringwheel.rotation = newRotation
+	steeringwheel.degrees.text = steeringwheel.rotation .. "°"
+end
+
 local function setupSteeringwheel(group, imageBackground)
 	local steeringwheel = display.newImage("media/gfx/steuerrad.png")
 	steeringwheel.x = imageBackground.x + 64
@@ -75,7 +80,10 @@ local function setupSteeringwheelFunctionality(steeringwheel, element)
 	steeringwheel:addEventListener("touch", rotateSteeringWheel)
 end
 
+
+
 function createSteeringwheel(imageBackground, element, group) 
 	steeringwheel = setupSteeringwheel(group, imageBackground)
+	updateRotation(element.value)
 	setupSteeringwheelFunctionality(steeringwheel, element)		
 end

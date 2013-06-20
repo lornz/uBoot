@@ -12,7 +12,7 @@ local function setupPumpe(imageBackground, group, element)
 	pumpe.y = imageBackground.y + 64
 	pumpe.value = 0
 	pumpe.state = 0
-	pumpe.valueText = display.newText(pumpe.value, 0, 0, native.systemFont, 64)
+	pumpe.valueText = display.newText(element.value, 0, 0, native.systemFont, 64)
 	pumpe.valueText:setReferencePoint(display.CenterReferencePoint)
 	pumpe.valueText.x = imageBackground.x + 192
 	pumpe.valueText.y = imageBackground.y + 64
@@ -78,6 +78,9 @@ local function setupVentilFunctionality(ventil, element, pumpe)
 		if(touching == true) then
 			--pumpenwert verringern und anzeigen
 			t.value = t.value - 1
+			if(t.value < 0) then
+				t.value = 0
+			end
 			t.valueText.text = t.value
 		end
 	end
