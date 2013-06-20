@@ -47,7 +47,6 @@ local function detectType(s, id)
 	if(s == 4) then
 		type = 5 						--BinaryControl: Werte 0-15
 	end
-	--type = 5 --debug UNBEDINGT WIEDER ENTFERNEN!!!
 	return type
 end
 
