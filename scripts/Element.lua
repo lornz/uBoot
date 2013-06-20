@@ -47,11 +47,11 @@ function getAllowedValues(elementType,currentValue)
 		-- SLIDER --
 		value = math.random(1,5)
 	else
-		value = 999
+		value = math.random(900,999)
 	end
 
 	if (value == currentValue) then
-		print("Wert bereits gesetzt, wähle neuen")
+		print("Wert "..value.." bereits gesetzt, wähle neuen")
 		return getAllowedValues(elementType,currentValue)
 	else
 		return value
