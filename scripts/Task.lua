@@ -1,29 +1,4 @@
 Task = {}
---[[
-local function chooseValue(type,currentValue)
-	local value
-	--print("type = "..tostring(type))
-	
-	if (type == 1) then
-		value = math.random (0,1)
-	elseif (type == 2) then
-		value = math.random(0,360)
-	elseif (type == 3) then
-		value = math.random(1,10)
-	elseif (type == 4) then
-		value = math.random(1,5)
-	else
-		value = 999
-	end
-
-	if (value == currentValue) then
-		print("Wert bereits gesetzt, wähle neuen")
-		return chooseValue(type,currentValue)
-	else
-		return value
-	end
-end]]--
-
 
 function decreaseTime()
    taskTime = taskTime-1
@@ -35,7 +10,7 @@ function decreaseTime()
    		-- Bestrafung!
 
    		--zB
-   		finishedTasks = finishedTasks - 1
+   		--finishedTasks = finishedTasks - 1
    else
    		--update timerBar
    		timerBar.xScale = taskTime/15 --taskTime/initialTime
@@ -68,11 +43,9 @@ function initTasks()
 		randomClient = math.random(1,#connectedClient) -- wähle ein Zufälligen Clienten aus
 		randomElement = math.random(1,#connectedClient[randomClient].board.elements) -- wählt ein zufälliges Board von dem Clienten aus
 
-		-- TODO: Prüfen, ob für ein Element schon ein Task besteht
 		tempTask = Task:new(connectedClient[randomClient].board.elements[randomElement],connectedClient[key].uuid) -- Erstellt neuen Task für gewähltes Element
 		sendStuff(tempTask,"task",gameChannel,connectedClient[key].uuid)
     end
-    --printTasksDebug()
 end
 
 finishedTasks = 0
@@ -82,8 +55,9 @@ local function countTasks()
 	if (finishedTasks == neededTasks) then
 		print("Level done")
 		-- wechsle zum nächsten Level
+
 		finishedTasks = 0
-		currentLevel = currentLevel + 1
+		sendStuff("next","level",gameChannel)
 	else
 		local temp = neededTasks - finishedTasks
 		print("Noch "..temp.." zu erledigen!")

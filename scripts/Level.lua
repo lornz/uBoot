@@ -18,7 +18,7 @@ Level[2]  = level2
 local level3 = {}
 level3.introText 	= "Water in freight room, hurry up! - Level 3"
 level3.timeFactor 	= 0.5
-level3.taskGoal 	= 5 -- gesamt benötigte Tasks für nächstes Level: taskGoal*player
+level3.taskGoal 	= 4 -- gesamt benötigte Tasks für nächstes Level: taskGoal*player
 Level[3]  = level3
 
 -- Level 4 --

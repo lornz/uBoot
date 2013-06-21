@@ -86,12 +86,12 @@ end
 
 local function initMessage(content,senderUUID)
     -- reagiert auf initialisierungs Nachrichten (Board erstellen)
-    storyboard.gotoScene( "scripts.SceneGame", transitionOptions )
+    storyboard.gotoScene( "scripts.SceneGameIntro", transitionOptions )
     if (connectionMode == 1) then
         unsubscribe(lobbyChannel)
     end
+    playerBoard = content
     
-    drawElements(content)
     
 end
 
@@ -132,11 +132,29 @@ local function readyMessage(content,senderUUID)
 end
 
 local function updateMessage(content, senderUUID)
-    --print("button " .. content.skinID .. ": Type = " .. content.type .. ": Value = ".. content.value)
-    
     -- diese empfangenen Werte an die "taskForce" übergeben
     Element[content.skinID].value = content.value -- Wert updaten (für Task erstellung)
     taskDone(content,senderUUID)
+end
+
+local function levelMessage(content)
+    if (content == "next") then
+        -- ToDo: alle bestehenden Tasks löschen
+        if not (taskTimer == nil) then
+            timer.cancel(taskTimer)
+        end
+
+        if (connectionMode == 1) then
+            --for key, value in pairs(Task) do
+            --    Task[key] = nil
+            --end
+        end
+
+        currentLevel = currentLevel + 1
+        storyboard.gotoScene( "scripts.SceneGameIntro", transitionOptions )
+    elseif (content == "lost") then
+        -- GAME OVER!
+    end
 end
 
 local function taskMessage(content)
@@ -169,6 +187,10 @@ local function receiveMessage(channel,content,mode,senderUUID,destination)
 
             if (mode == "ready") then
                 readyMessage(content,senderUUID)
+            end
+
+            if (mode == "level") then
+                levelMessage(content)
             end
 
             if (mode == "update") then
