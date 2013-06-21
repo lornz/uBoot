@@ -34,7 +34,7 @@ function getAllowedValues(elementType,currentValue)
 		value = math.random (0,1)
 	elseif (elementType == 2) then
 		-- STEERING WHEEL --
-		value = math.random(0,360)
+		value = math.random(0,359)
 	elseif (elementType == 3) then
 		-- PUMPE --
 		value = math.random(1,10)

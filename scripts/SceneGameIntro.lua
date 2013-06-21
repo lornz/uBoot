@@ -29,29 +29,6 @@ function scene:createScene( event )
 
         -----------------------------------------------------------------------------
 
-        -- ## KOMMANDO ZEILE ##
-        local commandBase = setupCommandBase(group)
-
-        
-        -- ## TASK  FUNCTIONS ##   
-        taskCountdown = display.newText("15", 0, 0, native.systemFont, 32)
-        taskCountdown:setReferencePoint(display.CenterReferencePoint)
-        taskCountdown.x = _W
-        taskCountdown.y = _H+_H-50
-        taskCountdown:setTextColor(0,255,0)
-        group:insert(taskCountdown)
-
-        timerVisual(group)
-
-        local function drawElements(content)
-                local i = 1
-                while(not(content.board.elements[i] == nil)) do 
-                --print ("position = " .. content.board.elements[i].position .. " , size = " ..content.board.elements[i].sizeX .. " , skinID = " .. content.board.elements[i].skinID)
-                displayImage(content.board.elements[i],group)
-                i = i + 1
-                end
-        end
-        drawElements(playerBoard)
 end
 
 
@@ -77,12 +54,34 @@ function scene:enterScene( event )
         --      INSERT code here (e.g. start timers, load audio, start listeners, etc.)
 
         -----------------------------------------------------------------------------
-        storyboard.removeScene( "scripts.SceneGameIntro" )
-        commandBase.command.text = "Stay cool!"
-        if(connectionMode == 1) then
-                initTasks()
+        local countdownTime = 5
+        local introCountdown = display.newText(tostring(countdownTime), 0, 0, native.systemFont, 32)
+        introCountdown:setReferencePoint(display.CenterReferencePoint)
+        introCountdown.x = _W
+        introCountdown.y = _H+_H-50
+        introCountdown:setTextColor(0,255,0)
+        group:insert(introCountdown)
+
+        local function decreaseIntroCountdown(event)
+                countdownTime = countdownTime- 1
+                introCountdown.text = tostring(countdownTime)
+                if (countdownTime == 0) then
+                        timer.cancel(event.source)
+                        countdownTime = 5
+                        
+                        storyboard.gotoScene( "scripts.SceneGame", transitionOptions )
+                end
         end
 
+        timer.performWithDelay( 1000, decreaseIntroCountdown, countdownTime )
+
+        local levelIntro = display.newText(Level[currentLevel].introText, 0, 0, native.systemFont, 32)
+        levelIntro:setReferencePoint(display.CenterReferencePoint)
+        levelIntro.x = _W
+        levelIntro.y = _H+_H-250
+        group:insert(levelIntro)
+
+        storyboard.removeScene( "scripts.SceneGame" )
 end
 
 
@@ -114,7 +113,6 @@ end
 -- Called prior to the removal of scene's "view" (display group)
 function scene:destroyScene( event )
         local group = self.view
-
         -----------------------------------------------------------------------------
 
         --      INSERT code here (e.g. remove listeners, widgets, save state, etc.)
