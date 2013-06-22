@@ -21,7 +21,6 @@ local scene = storyboard.newScene()
 function scene:createScene( event )
         local group = self.view
 
-        
         -----------------------------------------------------------------------------
 
         --      CREATE display objects and add them to 'group' here.

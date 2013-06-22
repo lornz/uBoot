@@ -28,7 +28,39 @@ function scene:createScene( event )
         --      Example use-case: Restore 'group' from previously saved state.
 
         -----------------------------------------------------------------------------
+        local countdownTime = 4
+        local introCountdown = display.newText(tostring(countdownTime), 0, 0, native.systemFont, 32)
+        introCountdown:setReferencePoint(display.CenterReferencePoint)
+        introCountdown.x = _W
+        introCountdown.y = _H+_H-50
+        introCountdown:setTextColor(0,255,0)
+        group:insert(introCountdown)
 
+        function decreaseIntroCountdown(event)
+                countdownTime = countdownTime- 1
+                introCountdown.text = tostring(countdownTime)
+                print(countdownTime)
+                if (countdownTime == 0) then
+                        timer.cancel(event.source)
+                        event.source = nil
+                        --introCountdown:removeSelf()
+                        --introCountdown = nil
+                        
+                        storyboard.gotoScene( "scripts.SceneGame", transitionOptions )
+                end
+        end
+
+        timer.performWithDelay( 1000, decreaseIntroCountdown, countdownTime )
+
+        
+
+        local levelIntro = display.newText(Level[currentLevel].introText, 0, 0, native.systemFont, 32)
+        levelIntro:setReferencePoint(display.CenterReferencePoint)
+        levelIntro.x = _W
+        levelIntro.y = _H+_H-250
+        group:insert(levelIntro)
+
+        storyboard.removeScene( "scripts.SceneGame" )
 end
 
 
@@ -54,34 +86,7 @@ function scene:enterScene( event )
         --      INSERT code here (e.g. start timers, load audio, start listeners, etc.)
 
         -----------------------------------------------------------------------------
-        local countdownTime = 5
-        local introCountdown = display.newText(tostring(countdownTime), 0, 0, native.systemFont, 32)
-        introCountdown:setReferencePoint(display.CenterReferencePoint)
-        introCountdown.x = _W
-        introCountdown.y = _H+_H-50
-        introCountdown:setTextColor(0,255,0)
-        group:insert(introCountdown)
-
-        local function decreaseIntroCountdown(event)
-                countdownTime = countdownTime- 1
-                introCountdown.text = tostring(countdownTime)
-                if (countdownTime == 0) then
-                        timer.cancel(event.source)
-                        countdownTime = 5
-                        
-                        storyboard.gotoScene( "scripts.SceneGame", transitionOptions )
-                end
-        end
-
-        timer.performWithDelay( 1000, decreaseIntroCountdown, countdownTime )
-
-        local levelIntro = display.newText(Level[currentLevel].introText, 0, 0, native.systemFont, 32)
-        levelIntro:setReferencePoint(display.CenterReferencePoint)
-        levelIntro.x = _W
-        levelIntro.y = _H+_H-250
-        group:insert(levelIntro)
-
-        storyboard.removeScene( "scripts.SceneGame" )
+        
 end
 
 
