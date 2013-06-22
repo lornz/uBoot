@@ -35,33 +35,13 @@ function initTasks()
     end
 end
 
-function showWaterLevel(value)
-	print("WaterLevel: "..value)
-end
-
-function updateWaterLevel(direction)
-	local nenner = Level[currentLevel].taskGoal * #connectedClient
-	if (direction == "down") then
-		waterLevel = waterLevel - (Level[currentLevel].waterStart / nenner)
-	elseif (direction == "up") then
-		waterLevel = waterLevel + (Level[currentLevel].waterStart / nenner)
-	end
-	print("Water went "..direction)
-	--print(waterLevel)
-	sendStuff(waterLevel,"water",gameChannel)
-
-	if (waterLevel <= 0) then
-		print("Level done")
-		sendStuff("next","level",gameChannel)
-	end
-end
-
 function decreaseTime()
    taskTime = taskTime-1
    taskCountdown.text = taskTime
 
    if(taskTime == 0) then
    		-- Bestrafung!
+   		-- ToDO: neuen Task anfordern?
 
    		sendStuff("up","water",gameChannel)
    else
