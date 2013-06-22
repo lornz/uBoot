@@ -131,7 +131,9 @@ end
 
 local function updateMessage(content, senderUUID)
     -- diese empfangenen Werte an die "taskForce" übergeben
-    Element[content.skinID].value = content.value -- Wert updaten (für Task erstellung)
+    if not(content.value == 9999) then
+        Element[content.skinID].value = content.value -- Wert updaten (für Task erstellung)
+    end
     taskDone(content,senderUUID)
 end
 
