@@ -90,9 +90,7 @@ local function initMessage(content,senderUUID)
     if (connectionMode == 1) then
         unsubscribe(lobbyChannel)
     end
-    playerBoard = content
-    
-    
+    playerBoard = content 
 end
 
 local function readyMessage(content,senderUUID)
@@ -139,15 +137,17 @@ end
 
 local function levelMessage(content)
     if (content == "next") then
-        -- ToDo: alle bestehenden Tasks löschen
         if not (taskTimer == nil) then
             timer.cancel(taskTimer)
         end
 
+        playerBoard = nil
         if (connectionMode == 1) then
-            --for key, value in pairs(Task) do
-            --    Task[key] = nil
-            --end
+            for key, value in pairs(connectedClient) do 
+                connectedClient[key] = nil
+                print("cleaned Client board")
+            end
+            initUBoot()
         end
 
         currentLevel = currentLevel + 1
