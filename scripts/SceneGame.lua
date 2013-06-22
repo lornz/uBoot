@@ -62,7 +62,7 @@ function scene:createScene( event )
         waterBar:setReferencePoint(display.BottomCenterReferencePoint)
         waterBar.x = 64
         waterBar.y = (_H*2)-20
-        waterBar.yScale = 0.001
+        waterBar.yScale = 0.001 -- 0 setzen leider nicht erlaubt
         waterBar:setFillColor(0, 100, 255, 100)
         group:insert(waterBar)
 end
@@ -77,8 +77,7 @@ function scene:willEnterScene( event )
         --      This event requires build 2012.782 or later.
 
         -----------------------------------------------------------------------------
-        -- ## KOMMANDO ZEILE ##
-        local commandBase = setupCommandBase(group)
+        
 end
 
 
@@ -92,13 +91,16 @@ function scene:enterScene( event )
 
         -----------------------------------------------------------------------------
         storyboard.removeScene( "scripts.SceneGameIntro" )
+
+        -- ## KOMMANDO ZEILE ##
+        local commandBase = setupCommandBase(group)
         commandBase.command.text = "Stay cool!"
+
         if(connectionMode == 1) then
                 initTasks()
         end
+
         showWaterLevel(waterLevel)
-        --local tempYScale = (waterLevel/100)
-        --transition.to( waterBar, { time=500, yScale=tempYScale} )
 end
 
 
