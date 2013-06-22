@@ -30,7 +30,6 @@ function scene:createScene( event )
 
         -- ## KOMMANDO ZEILE ##
         local commandBase = setupCommandBase(group)
-
         
         -- ## TASK  FUNCTIONS ##   
         taskCountdown = display.newText("15", 0, 0, native.systemFont, 32)

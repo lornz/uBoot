@@ -1,21 +1,8 @@
 Task = {}
 
-function decreaseTime()
-   taskTime = taskTime-1
-   taskCountdown.text = taskTime
 
-   
 
-   if(taskTime == 0) then
-   		-- Bestrafung!
 
-   		--zB
-   		--finishedTasks = finishedTasks - 1
-   else
-   		--update timerBar
-   		timerBar.xScale = taskTime/15 --taskTime/initialTime
-	end
-end
 
 function Task:new(element,uuid)
 
@@ -48,6 +35,41 @@ function initTasks()
     end
 end
 
+function showWaterLevel(value)
+	print("WaterLevel: "..value)
+end
+
+function updateWaterLevel(direction)
+	local nenner = Level[currentLevel].taskGoal * #connectedClient
+	if (direction == "down") then
+		waterLevel = waterLevel - (Level[currentLevel].waterStart / nenner)
+	elseif (direction == "up") then
+		waterLevel = waterLevel + (Level[currentLevel].waterStart / nenner)
+	end
+	print("Water went "..direction)
+	--print(waterLevel)
+	sendStuff(waterLevel,"water",gameChannel)
+
+	if (waterLevel <= 0) then
+		print("Level done")
+		sendStuff("next","level",gameChannel)
+	end
+end
+
+function decreaseTime()
+   taskTime = taskTime-1
+   taskCountdown.text = taskTime
+
+   if(taskTime == 0) then
+   		-- Bestrafung!
+
+   		sendStuff("up","water",gameChannel)
+   else
+   		--update timerBar
+   		timerBar.xScale = taskTime/15 --taskTime/initialTime
+	end
+end
+
 finishedTasks = 0
 local function countTasks()
 	finishedTasks = finishedTasks + 1
@@ -73,7 +95,9 @@ function taskDone(element,senderUUID)
 			if (element.value == key.value) then
 				print("Task erfüllt, sende neuen")
 
-				countTasks()
+				--countTasks()
+				--sendStuff("down","water",gameChannel)
+				updateWaterLevel("down")
 
 				local randomClient = math.random(1,#connectedClient) -- wähle ein Zufälligen Clienten aus
 				local randomElement = math.random(1,#connectedClient[randomClient].board.elements) -- wählt ein zufälliges Board von dem Clienten aus
@@ -87,6 +111,8 @@ function taskDone(element,senderUUID)
 		end
 	end
 end
+
+
 
 function timerVisual(parentGroup)
 	timerBarLength = 512

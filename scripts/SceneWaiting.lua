@@ -67,6 +67,8 @@ function scene:createScene( event )
                         sendStuff(connectedClient[i],"init",gameChannel,value.uuid) -- schickt "Board" an alle Spieler
                         i = i + 1
                 end
+                sendStuff(Level[currentLevel].waterStart,"water",gameChannel)
+                waterLevel = Level[currentLevel].waterStart
         end
 end
 

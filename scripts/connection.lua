@@ -142,6 +142,9 @@ local function levelMessage(content)
         end
 
         playerBoard = nil
+
+        currentLevel = currentLevel + 1
+        
         if (connectionMode == 1) then
             for key, value in pairs(connectedClient) do 
                 connectedClient[key] = nil
@@ -150,10 +153,22 @@ local function levelMessage(content)
             initUBoot()
         end
 
-        currentLevel = currentLevel + 1
+        
+
         storyboard.gotoScene( "scripts.SceneGameIntro", transitionOptions )
     elseif (content == "lost") then
         -- GAME OVER!
+    end
+end
+
+local function waterMessage(content)
+    if (content == "up") then
+        if (connectionMode == 1) then
+            updateWaterLevel(content)
+        end
+    else
+        print("update visible water level")
+        showWaterLevel(content)
     end
 end
 
@@ -191,6 +206,10 @@ local function receiveMessage(channel,content,mode,senderUUID,destination)
 
             if (mode == "level") then
                 levelMessage(content)
+            end
+
+            if (mode == "water") then
+                waterMessage(content)
             end
 
             if (mode == "update") then
