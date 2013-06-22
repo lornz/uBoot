@@ -28,9 +28,7 @@ function scene:createScene( event )
 
         -----------------------------------------------------------------------------
 
-        -- ## KOMMANDO ZEILE ##
-        local commandBase = setupCommandBase(group)
-
+        
         
         -- ## TASK  FUNCTIONS ##   
         taskCountdown = display.newText("15", 0, 0, native.systemFont, 32)
@@ -51,6 +49,22 @@ function scene:createScene( event )
                 end
         end
         drawElements(playerBoard)
+
+        -- ## WATER LEVEL ##
+        local waterBarBG = display.newRect(20, 200, 64, (_H*2)-50 )
+        waterBarBG:setReferencePoint(display.BottomCenterReferencePoint)
+        waterBarBG.x = 64
+        waterBarBG.y = (_H*2)-20
+        waterBarBG:setFillColor(100, 100, 100, 100)
+        group:insert(waterBarBG)
+
+        waterBar = display.newRect(20, 200, 64, (_H*2)-50 )
+        waterBar:setReferencePoint(display.BottomCenterReferencePoint)
+        waterBar.x = 64
+        waterBar.y = (_H*2)-20
+        waterBar.yScale = 0.001
+        waterBar:setFillColor(0, 100, 255, 100)
+        group:insert(waterBar)
 end
 
 
@@ -63,7 +77,8 @@ function scene:willEnterScene( event )
         --      This event requires build 2012.782 or later.
 
         -----------------------------------------------------------------------------
-
+        -- ## KOMMANDO ZEILE ##
+        local commandBase = setupCommandBase(group)
 end
 
 
@@ -81,7 +96,9 @@ function scene:enterScene( event )
         if(connectionMode == 1) then
                 initTasks()
         end
-
+        showWaterLevel(waterLevel)
+        --local tempYScale = (waterLevel/100)
+        --transition.to( waterBar, { time=500, yScale=tempYScale} )
 end
 
 
