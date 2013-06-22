@@ -54,6 +54,7 @@ function getAllowedValues(elementType,currentValue)
 	end
 end
 
+local blockedIDs = 0
 local function chooseElement(sizeX)
 
 	local function validSkinID(skinID)
@@ -67,7 +68,7 @@ local function chooseElement(sizeX)
 	end
 
 	local function randomSkinID(sizeX)
-		local skinID = math.random(sizeX*100, (sizeX*100)+100) -- 1 breite Skins bei 100 bis 199
+		local skinID = math.random(sizeX*100, (sizeX*100)+99) -- 1 breite Skins bei 100 bis 199
 		local elementType = nil
 
 		--es gibt nur bestimmte Anzahl an buttonLabels, daher darf die skinID nicht beliebig groß sein
@@ -106,6 +107,16 @@ local function chooseElement(sizeX)
 
 	skinID, elementType = randomSkinID(sizeX)
 	while (not(validSkinID(skinID))) do
+		blockedIDs = blockedIDs + 1
+		print("Blocked skinIDs: "..blockedIDs)
+		if (blockedIDs > 100) then
+			-- wenn nach 100 versuchen immer noch keine valide SkinID gefunden wurde, können alte wiederverwendet werden
+			blockedIDs = 0
+			for key,value in pairs(usedSkins) do
+				usedSkins[key] = nil
+			end
+			return skinID, elementType
+		end
 		skinID, elementType = randomSkinID(sizeX)
 	end
 
