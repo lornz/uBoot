@@ -170,8 +170,15 @@ local function waterMessage(content)
             updateWaterLevel(content)
         end
     else
+<<<<<<< HEAD
         --print("update visible water level")
         showWaterLevel(content)
+=======
+        print("update visible water level")
+        --if(not(waterBar == nil) and not(waterAnimation == nil)) then
+            showWaterLevel(content)
+        --end
+>>>>>>> origin/Flo's-branch
     end
 end
 

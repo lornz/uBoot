@@ -73,7 +73,7 @@ function scene:createScene( event )
         waterAnimation = display.newSprite( mySheet, sequenceData )
         group:insert(waterAnimation)
         waterAnimation.x = waterBar.x
-        waterAnimation.y = waterBar.y
+        waterAnimation.y = waterBar.y - 16
         waterAnimation:play()
 end
 
