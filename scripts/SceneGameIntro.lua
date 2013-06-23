@@ -39,7 +39,7 @@ function scene:createScene( event )
         function decreaseIntroCountdown(event)
                 countdownTime = countdownTime- 1
                 introCountdown.text = tostring(countdownTime)
-                print(countdownTime)
+                --print(countdownTime)
                 if (countdownTime == 0) then
                         timer.cancel(event.source)
                         event.source = nil

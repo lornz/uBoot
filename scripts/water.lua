@@ -6,7 +6,7 @@ function showWaterLevel(value)
 	local tempYScale = (waterLevel/100)
 	transition.to( waterBar, { time=500, yScale=tempYScale} )
 
-	print("WaterLevel: "..value)
+	--print("WaterLevel: "..value)
 end
 
 function updateWaterLevel(direction)
@@ -16,7 +16,7 @@ function updateWaterLevel(direction)
 	elseif (direction == "up") then
 		waterLevel = waterLevel + (Level[currentLevel].waterStart / nenner)
 	end
-	print("Water went "..direction)
+	--print("Water went "..direction)
 	sendStuff(waterLevel,"water",gameChannel)
 
 	if (waterLevel <= 0) then

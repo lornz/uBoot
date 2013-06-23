@@ -170,7 +170,7 @@ local function waterMessage(content)
             updateWaterLevel(content)
         end
     else
-        print("update visible water level")
+        --print("update visible water level")
         showWaterLevel(content)
     end
 end
