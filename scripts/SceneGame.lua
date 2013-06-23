@@ -65,10 +65,6 @@ function scene:createScene( event )
         waterBar.yScale = 0.001 -- 0 setzen leider nicht erlaubt
         waterBar:setFillColor(0, 100, 255, 100)
         group:insert(waterBar)
-
-<<<<<<< HEAD
-        
-=======
         local sheetData = { width=64, height=32, numFrames=16, sheetContentWidth=1024, sheetContentHeight=32 }
         local mySheet = graphics.newImageSheet( "media/gfx/wellenSprite.png", sheetData )
         local sequenceData = {
@@ -79,7 +75,6 @@ function scene:createScene( event )
         waterAnimation.x = waterBar.x
         waterAnimation.y = waterBar.y
         waterAnimation:play()
->>>>>>> origin/Flo's-branch
 end
 
 

@@ -3,13 +3,9 @@ function showWaterLevel(value)
 	waterLevel = value
 	local tempYScale = (waterLevel/100)
 	transition.to( waterBar, { time=500, yScale=tempYScale} )
-<<<<<<< HEAD
-
 	--print("WaterLevel: "..value)
-=======
 	transition.to( waterAnimation, {time = 500, y=waterBar.y - waterBar.height*tempYScale - 16})
 	print("WaterLevel: "..value)
->>>>>>> origin/Flo's-branch
 end
 
 function updateWaterLevel(direction)
