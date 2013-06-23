@@ -160,6 +160,7 @@ local function levelMessage(content)
         storyboard.gotoScene( "scripts.SceneGameIntro", transitionOptions )
     elseif (content == "lost") then
         -- GAME OVER!
+        print("GAME OVER!")
     end
 end
 

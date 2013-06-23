@@ -24,7 +24,8 @@ function updateWaterLevel(direction)
 		sendStuff("next","level",gameChannel)
 	end
 
-	if (waterLevel >= 100) then
-		print("GAME OVER!")
+	if (waterLevel >= 20) then
+		--print("GAME OVER!")
+		sendStuff("lost","level",gameChannel)
 	end
 end
