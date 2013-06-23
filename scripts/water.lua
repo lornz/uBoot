@@ -11,11 +11,9 @@ function updateWaterLevel(direction)
 	local nenner = Level[currentLevel].taskGoal * #connectedClient
 	if (direction == "down") then
 		waterLevel = waterLevel - (Level[currentLevel].waterStart / nenner)
-		print("welleDirection: " .. welleDirection)
 		print(direction)
 	elseif (direction == "up") then
 		waterLevel = waterLevel + (Level[currentLevel].waterStart / nenner)
-		print("welleDirection: " .. welleDirection)
 	end
 	print("Water went "..direction)
 	sendStuff(waterLevel,"water",gameChannel)

@@ -170,7 +170,9 @@ local function waterMessage(content)
         end
     else
         print("update visible water level")
-        showWaterLevel(content)
+        --if(not(waterBar == nil) and not(waterAnimation == nil)) then
+            showWaterLevel(content)
+        --end
     end
 end
 
