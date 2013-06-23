@@ -107,7 +107,19 @@ function taskDone(element,senderUUID)
 
 end
 
-
+function suddenTask()
+	local suddenValue = math.random(1,12)
+	print("suddenValue: "..suddenValue)
+	if (suddenValue > 10) then
+		if (suddenValue == 11) then
+			return "Shake your uBoot!"
+		elseif (suddenValue == 12) then
+			return "Turn your uBoot around!"
+		end
+	else
+		return nil
+	end
+end
 
 function timerVisual(parentGroup)
 	timerBarLength = 512
