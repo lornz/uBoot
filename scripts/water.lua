@@ -1,24 +1,29 @@
 
-
-
 function showWaterLevel(value)
 	waterLevel = value
 	local tempYScale = (waterLevel/100)
 	transition.to( waterBar, { time=500, yScale=tempYScale} )
+<<<<<<< HEAD
 
 	--print("WaterLevel: "..value)
+=======
+	transition.to( waterAnimation, {time = 500, y=waterBar.y - waterBar.height*tempYScale - 16})
+	print("WaterLevel: "..value)
+>>>>>>> origin/Flo's-branch
 end
 
 function updateWaterLevel(direction)
 	local nenner = Level[currentLevel].taskGoal * #connectedClient
 	if (direction == "down") then
 		waterLevel = waterLevel - (Level[currentLevel].waterStart / nenner)
+		print("welleDirection: " .. welleDirection)
+		print(direction)
 	elseif (direction == "up") then
 		waterLevel = waterLevel + (Level[currentLevel].waterStart / nenner)
+		print("welleDirection: " .. welleDirection)
 	end
 	--print("Water went "..direction)
 	sendStuff(waterLevel,"water",gameChannel)
-
 	if (waterLevel <= 0) then
 		print("Level done")
 		sendStuff("next","level",gameChannel)

@@ -66,7 +66,20 @@ function scene:createScene( event )
         waterBar:setFillColor(0, 100, 255, 100)
         group:insert(waterBar)
 
+<<<<<<< HEAD
         
+=======
+        local sheetData = { width=64, height=32, numFrames=16, sheetContentWidth=1024, sheetContentHeight=32 }
+        local mySheet = graphics.newImageSheet( "media/gfx/wellenSprite.png", sheetData )
+        local sequenceData = {
+        { name = "normal", start=1, count=16, time=3200 },
+        }
+        waterAnimation = display.newSprite( mySheet, sequenceData )
+        group:insert(waterAnimation)
+        waterAnimation.x = waterBar.x
+        waterAnimation.y = waterBar.y
+        waterAnimation:play()
+>>>>>>> origin/Flo's-branch
 end
 
 
