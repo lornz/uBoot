@@ -65,6 +65,8 @@ function scene:createScene( event )
         waterBar.yScale = 0.001 -- 0 setzen leider nicht erlaubt
         waterBar:setFillColor(0, 100, 255, 100)
         group:insert(waterBar)
+
+        
 end
 
 
@@ -101,6 +103,16 @@ function scene:enterScene( event )
         end
 
         showWaterLevel(waterLevel)
+
+        local function suddenTaskValue()
+                local suddenValue = suddenTask()
+                if not(suddenValue == nil) then
+                        print(suddenValue)
+                end
+        end
+        if (connectionMode == 1) then
+                suddenTaskTimer = timer.performWithDelay( Level[currentLevel].suddenTime, suddenTaskValue, 0 )
+        end
 end
 
 
@@ -113,6 +125,10 @@ function scene:exitScene( event )
         --      INSERT code here (e.g. stop timers, remove listeners, unload sounds, etc.)
 
         -----------------------------------------------------------------------------
+        if (connectionMode == 1) then
+                timer.cancel( suddenTaskTimer )
+        end
+
 end
 
 
