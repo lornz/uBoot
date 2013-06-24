@@ -115,13 +115,14 @@ function scene:enterScene( event )
                 end
                 timer.performWithDelay( 2000, startInitTasks, 1 )
 
+                --[[
                 local function suddenTaskValue()
                         local suddenValue = suddenTask()
                         if not(suddenValue == nil) then
                                 print(suddenValue)
-                        end
-                end
-                suddenTaskTimer = timer.performWithDelay( Level[currentLevel].suddenTime, suddenTaskValue, 0 )
+                        end --nicht mehr in Benutzung
+                end]]--
+                suddenTaskTimer = timer.performWithDelay( Level[currentLevel].suddenTime, suddenTask, 0 )
         end
 end
 

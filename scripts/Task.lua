@@ -89,15 +89,22 @@ end
 function suddenTask()
 	local suddenValue = math.random(1,12)
 	print("suddenValue: "..suddenValue)
-	if (suddenValue > 10) then
-		if (suddenValue == 11) then
-			return "Shake your uBoot!"
-		elseif (suddenValue == 12) then
-			return "Turn your uBoot around!"
+	if (suddenValue == 11) then
+		local function onShake (event)
+    		if event.isShake then
+    			Runtime:removeEventListener( "accelerometer", onShake )
+        		print("uBoot shaked. Thanks!")
+    		end
 		end
-	else
-		return nil
+		Runtime:addEventListener("accelerometer", onShake)
+		return "Shake your uBoot!"
+		
 	end
+	if (suddenValue == 12) then
+		return "Turn your uBoot around!"
+	end
+
+	return nil
 end
 
 function timerVisual(parentGroup)
