@@ -1,6 +1,6 @@
-createUUID()
 lobbyChannel = "lobby_lorenz"
-deviceID = (system.getInfo( "deviceID" ))
+--deviceID = (system.getInfo( "deviceID" ))
+--createUUID()
 --print(deviceID)
 
 function printTasksDebug()

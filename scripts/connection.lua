@@ -1,4 +1,5 @@
 require ("pubnub")
+deviceID = (system.getInfo( "deviceID" ))
 
 connectionMode = 0 -- 0: nicht verbunden, 1: Server, 2: Client
 
@@ -18,8 +19,8 @@ function createUUID()
         uuid = deviceID -- neue Methode über Geräte ID
     end
     print("UUID: "..uuid)
-    
 end
+createUUID()
 
 games   = {}                -- speichert alle verfügbaren Spiele
 player  = {}                -- speichert alle anwesenden Spieler
