@@ -48,35 +48,14 @@ function decreaseTime()
 	end
 end
 
-finishedTasks = 0
-local function countTasks()
-	finishedTasks = finishedTasks + 1
-	local neededTasks = #connectedClient * Level[currentLevel].taskGoal
-	if (finishedTasks == neededTasks) then
-		print("Level done")
-		-- wechsle zum nächsten Level
-
-		finishedTasks = 0
-		sendStuff("next","level",gameChannel)
-	else
-		local temp = neededTasks - finishedTasks
-		print("Noch "..temp.." zu erledigen!")
-	end
-end
-
 function taskDone(element,senderUUID)
 	-- löscht einen Task für ein Element, wenn er erfüllt wurde und erzeugt einen neuen
 
 	for key, value in pairs(Task) do 
 		if (key.skinID == element.skinID) then
-			--print("neuer Wert: "..tostring(element.value) )
-			--print("zu erreichender Wert: "..tostring(key.value) )
 			if (element.value == key.value) then
-				print("Task erfüllt, sende neuen")
-
-				--countTasks()
-				--sendStuff("down","water",gameChannel)
-				
+				-- Task rechtzeitig erledigt
+				print("Task erfüllt, sende neuen")				
 				updateWaterLevel("down")
 				
 
@@ -90,15 +69,18 @@ function taskDone(element,senderUUID)
 			end
 		end
 	end
+	
 	if (element.value == 9999) then
-		-- Task nicht erledigt
+		-- Task nicht rechtzeitig erledigt
 		for key, value in pairs(Task) do 
 			if (key.uuid == senderUUID) then
 				print("Task NICHT erfüllt, sende neuen")
+				updateWaterLevel("up")
+
 				local randomClient = math.random(1,#connectedClient) -- wähle ein Zufälligen Clienten aus
 				local randomElement = math.random(1,#connectedClient[randomClient].board.elements) -- wählt ein zufälliges Board von dem Clienten aus
 				local tempTask = Task:new(connectedClient[randomClient].board.elements[randomElement],Task[key].uuid)
-				updateWaterLevel("up")
+				
 				sendStuff(tempTask,"task",gameChannel,Task[key].uuid)
 				Task[key] = nil -- alten Task löschen
 			end
