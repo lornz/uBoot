@@ -1,6 +1,7 @@
 require ("pubnub")
 deviceID = (system.getInfo( "deviceID" ))
 
+
 connectionMode = 0 -- 0: nicht verbunden, 1: Server, 2: Client
 
 multiplayer = pubnub.new({
@@ -166,18 +167,18 @@ local function levelMessage(content)
 end
 
 local function waterMessage(content)
-    if (content == "up") then
-        if (connectionMode == 1) then
-            updateWaterLevel(content)
-        end
-    else
+    --if (content == "up") then
+        --if (connectionMode == 1) then
+        --    updateWaterLevel(content)
+        --end
+    --else
         --print("update visible water level")
         showWaterLevel(content)
         print("update visible water level")
         --if(not(waterBar == nil) and not(waterAnimation == nil)) then
             showWaterLevel(content)
         --end
-    end
+    --end
 end
 
 local function taskMessage(content)

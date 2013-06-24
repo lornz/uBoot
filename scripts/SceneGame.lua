@@ -107,7 +107,10 @@ function scene:enterScene( event )
         commandBase.command.text = "Stay cool!"
 
         if(connectionMode == 1) then
-                initTasks()
+                local function startInitTasks()
+                        initTasks()
+                end
+                timer.performWithDelay( 2000, startInitTasks, 1 )
         end
 
         showWaterLevel(waterLevel)
@@ -136,6 +139,7 @@ function scene:exitScene( event )
         if (connectionMode == 1) then
                 timer.cancel( suddenTaskTimer )
         end
+
 
 end
 

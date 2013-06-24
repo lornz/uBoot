@@ -40,7 +40,7 @@ function decreaseTime()
    		local taskMissed = {}
    		taskMissed.value = 9999
    		sendStuff(taskMissed,"update",gameChannel)-- Nachricht an Server absetzen über Statusänderung
-   		sendStuff("up","water",gameChannel)
+   		--sendStuff("up","water",gameChannel)
    else
    		--update timerBar
    		--timerBar.xScale = taskTime/15 --taskTime/initialTime
@@ -98,7 +98,7 @@ function taskDone(element,senderUUID)
 				local randomClient = math.random(1,#connectedClient) -- wähle ein Zufälligen Clienten aus
 				local randomElement = math.random(1,#connectedClient[randomClient].board.elements) -- wählt ein zufälliges Board von dem Clienten aus
 				local tempTask = Task:new(connectedClient[randomClient].board.elements[randomElement],Task[key].uuid)
-
+				updateWaterLevel("up")
 				sendStuff(tempTask,"task",gameChannel,Task[key].uuid)
 				Task[key] = nil -- alten Task löschen
 			end

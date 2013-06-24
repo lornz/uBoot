@@ -2,9 +2,12 @@
 function showWaterLevel(value)
 	waterLevel = value
 	local tempYScale = (waterLevel/100)
-	transition.to( waterBar, { time=500, yScale=tempYScale} )
-	--print("WaterLevel: "..value)
-	transition.to( waterAnimation, {time = 500, y=waterBar.y - waterBar.height*tempYScale - 16})
+	
+	if (waterBar ~= nil) and (waterBar.height ~= nil) then
+		transition.to( waterBar, { time=500, yScale=tempYScale} )
+		transition.to( waterAnimation, {time = 500, y=waterBar.y - waterBar.height*tempYScale - 16})
+	end
+
 	print("WaterLevel: "..value)
 end
 
