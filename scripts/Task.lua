@@ -2,17 +2,17 @@ Task = {}
 
 function Task:new(element,uuid)
 
-	local task = {}
+	local task 	= {}
 
 	task.skinID = element.skinID -- ID des ELements, auf das sich der Task bezieht
 	
-	task.value = getAllowedValues(element.type,element.value)
+	task.value 	= getAllowedValues(element.type,element.value)
 
-	task.uuid = uuid -- welche uuid bekommt den task angezeigt
+	task.uuid 	= uuid -- welche uuid bekommt den task angezeigt
 
-	task.time = 10*Level[currentLevel].timeFactor -- TODO: je nach type des Elements Zeit wählen
+	task.time 	= 10*Level[currentLevel].timeFactor -- TODO: je nach type des Elements Zeit wählen
 
-	Task[task] = task
+	Task[task] 	= task
 
 	return task
 end
@@ -23,8 +23,8 @@ function initTasks()
 	local randomElement
 	local tempTask
 	for key, value in pairs(connectedClient) do 
-		randomClient = math.random(1,#connectedClient) -- wähle ein Zufälligen Clienten aus
-		randomElement = math.random(1,#connectedClient[randomClient].board.elements) -- wählt ein zufälliges Board von dem Clienten aus
+		randomClient 	= math.random(1,#connectedClient) -- wähle ein Zufälligen Clienten aus
+		randomElement 	= math.random(1,#connectedClient[randomClient].board.elements) -- wählt ein zufälliges Board von dem Clienten aus
 
 		tempTask = Task:new(connectedClient[randomClient].board.elements[randomElement],connectedClient[key].uuid) -- Erstellt neuen Task für gewähltes Element
 		sendStuff(tempTask,"task",gameChannel,connectedClient[key].uuid)
@@ -40,10 +40,7 @@ function decreaseTime()
    		local taskMissed = {}
    		taskMissed.value = 9999
    		sendStuff(taskMissed,"update",gameChannel)-- Nachricht an Server absetzen über Statusänderung
-   		--sendStuff("up","water",gameChannel)
    else
-   		--update timerBar
-   		--timerBar.xScale = taskTime/15 --taskTime/initialTime
    		timerBar.xScale = taskTime/(Level[currentLevel].timeFactor * 10) --taskTime/initialTime
 	end
 end
@@ -69,7 +66,7 @@ function taskDone(element,senderUUID)
 			end
 		end
 	end
-	
+
 	if (element.value == 9999) then
 		-- Task nicht rechtzeitig erledigt
 		for key, value in pairs(Task) do 
