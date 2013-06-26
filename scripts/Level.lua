@@ -4,7 +4,7 @@ currentLevel = 1
 -- Level 1 --
 local level1 = {}
 level1.introText 	= "Safe your uBoot! - Level 1"
-level1.waterStart	= 10 	-- Starthöhe des Wasser
+level1.waterStart	= 90 	-- Starthöhe des Wasser
 level1.timeFactor 	= 3 
 level1.taskGoal 	= 2 	-- gesamt benötigte Tasks für nächstes Level: taskGoal*player
 level1.suddenTime 	= 1000000 -- wie oft ein suddenTask entstehen könnte

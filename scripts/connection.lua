@@ -166,6 +166,7 @@ local function levelMessage(content)
     elseif (content == "lost") then
         -- GAME OVER!
         print("GAME OVER!")
+        storyboard.gotoScene( "scripts.SceneGameOver", transitionOptions )
     end
 end
 

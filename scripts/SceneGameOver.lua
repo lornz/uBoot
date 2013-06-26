@@ -28,54 +28,11 @@ function scene:createScene( event )
 
         -----------------------------------------------------------------------------
 
-        
-        
-        -- ## TASK  FUNCTIONS ##   
-        taskCountdown = display.newText("15", 0, 0, native.systemFont, 32)
-        taskCountdown:setReferencePoint(display.CenterReferencePoint)
-        taskCountdown.x = _W
-        taskCountdown.y = _H+_H-50
-        taskCountdown:setTextColor(0,255,0)
-        group:insert(taskCountdown)
-
-        timerVisual(group)
-
-        local function drawElements(content)
-                local i = 1
-                while(not(content.board.elements[i] == nil)) do 
-                --print ("position = " .. content.board.elements[i].position .. " , size = " ..content.board.elements[i].sizeX .. " , skinID = " .. content.board.elements[i].skinID)
-                displayImage(content.board.elements[i],group)
-                i = i + 1
-                end
-        end
-        drawElements(playerBoard)
-
-        -- ## WATER LEVEL ##
-        local waterBarBG = display.newRect(20, 200, 64, (_H*2)-50 )
-        waterBarBG:setReferencePoint(display.BottomCenterReferencePoint)
-        waterBarBG.x = 64
-        waterBarBG.y = (_H*2)-20
-        waterBarBG:setFillColor(100, 100, 100, 100)
-        group:insert(waterBarBG)
-
-        waterBar = display.newRect(20, 200, 64, (_H*2)-50 )
-        waterBar:setReferencePoint(display.BottomCenterReferencePoint)
-        waterBar.x = 64
-        waterBar.y = (_H*2)-20
-        waterBar.yScale = 0.001 -- 0 setzen leider nicht erlaubt
-        waterBar:setFillColor(0, 100, 255, 100)
-        group:insert(waterBar)
-        
-        local sheetData = { width=64, height=32, numFrames=16, sheetContentWidth=1024, sheetContentHeight=32 }
-        local mySheet = graphics.newImageSheet( "media/gfx/wellenSprite.png", sheetData )
-        local sequenceData = {
-        { name = "normal", start=1, count=16, time=3200 },
-        }
-        waterAnimation = display.newSprite( mySheet, sequenceData )
-        group:insert(waterAnimation)
-        waterAnimation.x = waterBar.x
-        waterAnimation.y = waterBar.y - 16
-        waterAnimation:play()
+       local textGameOver = display.newText("Game over!", 0, 0, native.systemFont, 72)
+        textGameOver:setReferencePoint(display.centerReferencePoint)
+        textGameOver.x =  display.viewableContentWidth/2
+        textGameOver.y =  display.viewableContentHeight/2
+        group:insert(textGameOver)
 end
 
 
@@ -88,7 +45,7 @@ function scene:willEnterScene( event )
         --      This event requires build 2012.782 or later.
 
         -----------------------------------------------------------------------------
-        
+
 end
 
 
@@ -101,22 +58,7 @@ function scene:enterScene( event )
         --      INSERT code here (e.g. start timers, load audio, start listeners, etc.)
 
         -----------------------------------------------------------------------------
-        storyboard.removeScene( "scripts.SceneGameIntro" )
-
-        -- ## KOMMANDO ZEILE ##
-        local commandBase = setupCommandBase(group)
-        commandBase.command.text = "Stay cool!"
-
-        showWaterLevel(waterLevel)
-       
-        if (connectionMode == 1) then
-                local function startInitTasks()
-                        initTasks()
-                end
-                timer.performWithDelay( 2000, startInitTasks, 1 )
-
-                suddenTaskTimer = timer.performWithDelay( Level[currentLevel].suddenTime, suddenTask, 0 )
-        end
+        storyboard.removeScene( "scripts.SceneGame" )
 end
 
 
@@ -129,17 +71,7 @@ function scene:exitScene( event )
         --      INSERT code here (e.g. stop timers, remove listeners, unload sounds, etc.)
 
         -----------------------------------------------------------------------------
-        if (connectionMode == 1) then
-            timer.cancel( suddenTaskTimer )
-        end
 
-        if (taskTimer ~= nil ) then
-            timer.cancel( taskTimer )
-        end
-
-        if (shakeEventTimer ~= nil ) then
-            timer.cancel( shakeEventTimer )
-        end
 end
 
 
@@ -179,12 +111,7 @@ function scene:overlayBegan( event )
         --      This event requires build 2012.797 or later.
 
         -----------------------------------------------------------------------------
-       
-        timer.pause( taskTimer )
 
-        if (connectionMode == 1) then
-                timer.pause( suddenTaskTimer )
-        end 
 end
 
 
@@ -198,11 +125,7 @@ function scene:overlayEnded( event )
         --      This event requires build 2012.797 or later.
 
         -----------------------------------------------------------------------------
-         timer.resume( taskTimer )
 
-        if (connectionMode == 1) then
-                timer.resume( suddenTaskTimer )
-        end
 end
 
 
