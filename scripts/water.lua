@@ -26,4 +26,5 @@ function updateWaterLevel(direction)
 		--print("GAME OVER!")
 		sendStuff("lost","level",gameChannel)
 	end
+	print("Water went "..direction)
 end

@@ -170,6 +170,28 @@ local function waterMessage(content)
     showWaterLevel(content)
 end
 
+local suddenTaskfailed = false
+local function suddenTaskMessage(content)
+    if (content     == "failed") then
+        -- suddenTask nicht rechtzeitig erledigt 
+        if (connectionMode == 1) then -- nur der Server bestraft
+            --> Bestrafung
+            if (suddenTaskfailed == false) then -- nur eine Bestrafung pro Fail
+                suddenTaskfailed = true
+                print("SuddenTask failed")
+                updateWaterLevel("up")
+            end
+        end
+    elseif (content == "shake") then
+        -- shake Event
+        suddenTaskfailed = false
+        createShakeEvent()
+    elseif (conten  == "flip") then
+        suddenTaskfailed = false
+        -- flip Event
+    end
+end
+
 local function taskMessage(content)
     if not (taskTimer == nil) then
         timer.cancel(taskTimer)
@@ -210,6 +232,10 @@ local function receiveMessage(channel,content,mode,senderUUID,destination)
                 waterMessage(content)
             end
 
+            if (mode == "water") then
+                waterMessage(content)
+            end
+
             if (mode == "update") then
                 if (connectionMode == 1) then
                     -- updates nur für Server relevant
@@ -222,6 +248,10 @@ local function receiveMessage(channel,content,mode,senderUUID,destination)
                     -- ist die Nachricht für mich?
                     taskMessage(content)
                 end
+            end
+
+            if (mode == "suddenTask") then
+                suddenTaskMessage(content)
             end
         end
     end
