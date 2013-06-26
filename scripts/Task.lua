@@ -10,7 +10,7 @@ function Task:new(element,uuid)
 
 	task.uuid 	= uuid -- welche uuid bekommt den task angezeigt
 
-	task.time 	= 10*Level[currentLevel].timeFactor -- TODO: je nach type des Elements Zeit wählen
+	task.time 	= 10*Level[currentLevel].timeFactor 
 
 	Task[task] 	= task
 
@@ -86,25 +86,56 @@ function taskDone(element,senderUUID)
 
 end
 
+function createShakeEvent()
+	if (suddenTaskActivated == false) then
+		-- nur wenn bisher kein suddenTask im Raum steht
+
+		local function onShake (event)
+	    	if event.isShake then
+	    		Runtime:removeEventListener( "accelerometer", onShake )
+	    		suddenTaskActivated = false
+	    		timer.cancel( shakeEventTimer )
+	    		shakebackground:setFillColor( 20, 190, 20)
+	        	shakeCommand.text = "Shaked!"
+
+	        	local function hideShake()
+	        		storyboard.hideOverlay("scripts.SceneShake", transitionOptions)
+	        	end
+	        	timer.performWithDelay( 500, hideShake,  1)
+	    	end
+		end
+		Runtime:addEventListener("accelerometer", onShake)
+
+		local function suddenTaskFailed(event)
+			Runtime:removeEventListener( "accelerometer", onShake )
+			suddenTaskActivated = false
+			sendStuff("failed","suddenTask",gameChannel)
+			shakebackground:setFillColor( 225, 50, 20)
+			shakeCommand.text = "Failed!"
+			
+			local function hideShake()
+	        		storyboard.hideOverlay("scripts.SceneShake", transitionOptions)
+	        end
+			timer.performWithDelay( 500, hideShake,  1)
+		end
+		shakeEventTimer = timer.performWithDelay( 5000, suddenTaskFailed,  1)
+		print("Shake your uBoot!")
+
+		suddenTaskActivated = true
+		storyboard.showOverlay("scripts.SceneShake", transitionOptions)
+	end
+end
+
+suddenTaskActivated = false
 function suddenTask()
 	local suddenValue = math.random(1,12)
 	print("suddenValue: "..suddenValue)
-	if (suddenValue == 11) then
-		local function onShake (event)
-    		if event.isShake then
-    			Runtime:removeEventListener( "accelerometer", onShake )
-        		print("uBoot shaked. Thanks!")
-    		end
-		end
-		Runtime:addEventListener("accelerometer", onShake)
-		return "Shake your uBoot!"
-		
+	if (suddenValue < 12) then
+		sendStuff("shake","suddenTask",gameChannel)
 	end
 	if (suddenValue == 12) then
-		return "Turn your uBoot around!"
+		sendStuff("flip","suddenTask",gameChannel)
 	end
-
-	return nil
 end
 
 function timerVisual(parentGroup)
