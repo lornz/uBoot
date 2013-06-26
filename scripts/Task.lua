@@ -112,7 +112,7 @@ function createShakeEvent()
 			sendStuff("failed","suddenTask",gameChannel)
 			shakebackground:setFillColor( 225, 50, 20)
 			shakeCommand.text = "Failed!"
-			
+
 			local function hideShake()
 	        		storyboard.hideOverlay("scripts.SceneShake", transitionOptions)
 	        end
@@ -130,7 +130,7 @@ suddenTaskActivated = false
 function suddenTask()
 	local suddenValue = math.random(1,12)
 	print("suddenValue: "..suddenValue)
-	if (suddenValue < 12) then
+	if (suddenValue == 11) then
 		sendStuff("shake","suddenTask",gameChannel)
 	end
 	if (suddenValue == 12) then
