@@ -32,6 +32,7 @@ function initTasks()
 end
 
 function decreaseTime()
+	print("time decreased!")
    taskTime = taskTime-1
    taskCountdown.text = taskTime
 

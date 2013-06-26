@@ -29,10 +29,10 @@ function scene:createScene( event )
         -----------------------------------------------------------------------------
 
        local textGameOver = display.newText("Game over!", 0, 0, native.systemFont, 72)
-        textGameOver:setReferencePoint(display.centerReferencePoint)
-        textGameOver.x =  display.viewableContentWidth/2
-        textGameOver.y =  display.viewableContentHeight/2
-        group:insert(textGameOver)
+       textGameOver:setReferencePoint(display.centerReferencePoint)
+       textGameOver.x =  display.viewableContentWidth/2
+       textGameOver.y =  display.viewableContentHeight/2
+       group:insert(textGameOver)
 end
 
 
@@ -57,8 +57,12 @@ function scene:enterScene( event )
 
         --      INSERT code here (e.g. start timers, load audio, start listeners, etc.)
 
-        -----------------------------------------------------------------------------
-        storyboard.removeScene( "scripts.SceneGame" )
+        ----------------------------------------------------------------------------
+        if (taskTimer ~= nil ) then
+            timer.cancel( taskTimer )
+
+        end
+        storyboard.removeAll()
 end
 
 

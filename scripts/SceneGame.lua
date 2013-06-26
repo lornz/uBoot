@@ -133,10 +133,6 @@ function scene:exitScene( event )
             timer.cancel( suddenTaskTimer )
         end
 
-        if (taskTimer ~= nil ) then
-            timer.cancel( taskTimer )
-        end
-
         if (shakeEventTimer ~= nil ) then
             timer.cancel( shakeEventTimer )
         end
@@ -165,7 +161,6 @@ function scene:destroyScene( event )
         --      INSERT code here (e.g. remove listeners, widgets, save state, etc.)
 
         -----------------------------------------------------------------------------
-
 end
 
 
