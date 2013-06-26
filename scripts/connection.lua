@@ -26,13 +26,19 @@ createUUID()
 games   = {}                -- speichert alle verfügbaren Spiele
 player  = {}                -- speichert alle anwesenden Spieler
 
-local playerNumber = 1      -- bisher ungenutzt
+local playerNumber = 1
 local function addPlayer(playerUUID)
 	if (player[playerUUID] == nil) then
-		player[playerUUID] = { uuid = playerUUID, playerNumber = playerNumber, ready = false, deviceID = deviceID}
+        local tempPlayer = {}
+        tempPlayer.uuid = playerUUID
+        tempPlayer.playerNumber = playerNumber
+        tempPlayer.ready = false
+        tempPlayer.deviceID = deviceID
+		--player[playerUUID] = { uuid = playerUUID, playerNumber = playerNumber, ready = false, deviceID = deviceID}
+        player[playerUUID] = tempPlayer
 		playerNumber = playerNumber + 1
 		print("player added")
-        showPlayers()
+        showPlayers(tempPlayer)
 	else
 		print("player already in list")
 	end
@@ -81,9 +87,11 @@ local function connectMessage(content,senderUUID)
     -- reagiert auf ping/pong Nachrichten
     if(content == "ping") then
             sendStuff("pong","connect",gameChannel)
+            sendStuff(imReady,"ready",gameChannel)
             addPlayer(senderUUID)
     elseif(content == "pong") then
             addPlayer(senderUUID)
+            sendStuff(imReady,"ready",gameChannel)
     end
 end
 
@@ -125,11 +133,11 @@ local function readyMessage(content,senderUUID)
         if (player[senderUUID].ready == false) then
             player[senderUUID].ready = content -- setze Spieler mit senderUUID auf ready/not-ready
             checkReadyStatus()
-            playerName[senderUUID]:setTextColor(50,250,0)
+            showPlayers(player[senderUUID])
         elseif (player[senderUUID].ready == true) then
             player[senderUUID].ready = content -- setze Spieler mit senderUUID auf ready/not-ready
             checkReadyStatus()
-            playerName[senderUUID]:setTextColor(250,50,0)
+            showPlayers(player[senderUUID])
         end
     end
 end

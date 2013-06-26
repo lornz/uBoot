@@ -4,7 +4,7 @@ currentLevel = 1
 -- Level 1 --
 local level1 = {}
 level1.introText 	= "Safe your uBoot! - Level 1"
-level1.waterStart	= 90 	-- Starthöhe des Wasser
+level1.waterStart	= 10 	-- Starthöhe des Wasser
 level1.timeFactor 	= 3 
 level1.taskGoal 	= 2 	-- gesamt benötigte Tasks für nächstes Level: taskGoal*player
 level1.suddenTime 	= 1000000 -- wie oft ein suddenTask entstehen könnte
@@ -22,7 +22,7 @@ Level[2]  = level2
 -- Level 3 --
 local level3 = {}
 level3.introText 	= "Water in freight room, hurry up! - Level 3"
-level3.waterStart 	= 40 -- Starthöhe des Wasser
+level3.waterStart 	= 30 -- Starthöhe des Wasser
 level3.timeFactor 	= 1
 level3.taskGoal 	= 4 -- gesamt benötigte Tasks für nächstes Level: taskGoal*player
 level3.suddenTime 	= 5000 -- wie oft ein suddenTask entstehen könnte
@@ -31,7 +31,7 @@ Level[3]  = level3
 -- Level 4 --
 local level4 = {}
 level4.introText 	= "PIRATES, GNARR! - Level 4"
-level4.waterStart	= 50 -- Starthöhe des Wasser
+level4.waterStart	= 40 -- Starthöhe des Wasser
 level4.timeFactor 	= 0.9
 level4.taskGoal 	= 5 -- gesamt benötigte Tasks für nächstes Level: taskGoal*player
 level4.suddenTime 	= 5000 -- wie oft ein suddenTask entstehen könnte

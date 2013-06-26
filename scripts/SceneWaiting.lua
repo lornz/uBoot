@@ -35,7 +35,7 @@ function scene:createScene( event )
         textStart.y =  display.viewableContentHeight/2
         group:insert(textStart)
 
-        local imReady = false
+        imReady = false
         local function textStartTap(event)
                 if(event.phase == "ended") then
                         if (imReady == false) then
@@ -60,15 +60,27 @@ function scene:createScene( event )
 
         -- ## PLAYER NAMES ##
         playerName = {}
-        function showPlayers()
-                for key,value in pairs(player) do
-                        --print(value.uuid)
-                        playerName[value.uuid] = display.newText(value.deviceID, 0, 0, native.systemFont, 30)
-                        playerName[value.uuid]:setReferencePoint(display.centerReferencePoint)
-                        playerName[value.uuid].x =  display.viewableContentWidth/2
-                        playerName[value.uuid].y =  250+(50*value.playerNumber)
-                        playerName[value.uuid]:setTextColor(250,50,0)
-                        group:insert(playerName[value.uuid])
+        function showPlayers(localPlayer)
+                if (playerName[localPlayer.uuid] == nil) then
+                        -- wenn Spieler noch nicht in Liste, füge ihn hinzu
+                        print(localPlayer.deviceID)
+                        playerName[localPlayer.uuid] = display.newText(localPlayer.deviceID, 0, 0, native.systemFont, 30)
+                        playerName[localPlayer.uuid]:setReferencePoint(display.centerReferencePoint)
+                        playerName[localPlayer.uuid].x =  display.viewableContentWidth/2
+                        playerName[localPlayer.uuid].y =  250+(50*localPlayer.playerNumber)
+                        group:insert(playerName[localPlayer.uuid])
+                        if (localPlayer.ready == false) then
+                                playerName[localPlayer.uuid]:setTextColor(250,50,0)
+                        elseif (localPlayer.ready == true) then
+                                 playerName[localPlayer.uuid]:setTextColor(50,250,0)
+                        end 
+                end
+                if (playerName[localPlayer.uuid] ~= nil) then
+                         if (localPlayer.ready == false) then
+                                playerName[localPlayer.uuid]:setTextColor(250,50,0)
+                        elseif (localPlayer.ready == true) then
+                                 playerName[localPlayer.uuid]:setTextColor(50,250,0)
+                        end 
                 end
         end
 
