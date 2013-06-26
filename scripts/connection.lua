@@ -29,9 +29,10 @@ player  = {}                -- speichert alle anwesenden Spieler
 local playerNumber = 1      -- bisher ungenutzt
 local function addPlayer(playerUUID)
 	if (player[playerUUID] == nil) then
-		player[playerUUID] = { uuid = playerUUID, playerNumber = playerNumber, ready = false}
+		player[playerUUID] = { uuid = playerUUID, playerNumber = playerNumber, ready = false, deviceID = deviceID}
 		playerNumber = playerNumber + 1
 		print("player added")
+        showPlayers()
 	else
 		print("player already in list")
 	end
@@ -124,9 +125,11 @@ local function readyMessage(content,senderUUID)
         if (player[senderUUID].ready == false) then
             player[senderUUID].ready = content -- setze Spieler mit senderUUID auf ready/not-ready
             checkReadyStatus()
+            playerName[senderUUID]:setTextColor(50,250,0)
         elseif (player[senderUUID].ready == true) then
             player[senderUUID].ready = content -- setze Spieler mit senderUUID auf ready/not-ready
             checkReadyStatus()
+            playerName[senderUUID]:setTextColor(250,50,0)
         end
     end
 end
